@@ -3,11 +3,11 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: Hexo
-subtitle:
+title: zkzong's blog
+subtitle: 技术博客
 description:
 keywords:
-author: John Doe
+author: Zong
 language:
 timezone:
 
@@ -78,4 +78,6 @@ theme: landscape
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
-  type:
+  type: git
+  repository: https://github.com/zkzong/zkzong.github.io.git
+  branch: master
