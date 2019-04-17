@@ -1,5 +1,4 @@
 ---
-title: 分类
-date: 2019-04-17 00:06:09
-type: "categories"
+title: categories
+date: 2019-04-17 23:24:36
 ---
