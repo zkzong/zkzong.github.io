@@ -1,3 +1,9 @@
+---
+title: 如何把Spring Boot项目的war包部署到tomcat
+date: 2019-04-18
+categories: Spring Boot
+---
+
 Spring Boot默认提供内嵌的tomcat，所以打包直接生成jar包，用`java -jar`命令就可以启动。但是，有时候我们更希望一个tomcat来管理多个项目，这种情况下就需要项目是war格式的包而不是jar格式的包。
 
 本文介绍如何把Spring Boot项目的war包部署到tomcat。

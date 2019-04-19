@@ -1,3 +1,9 @@
+---
+title: Spring Boot CommandLineRunner和ApplicationRunner
+date: 2019-04-18
+categories: Spring Boot
+---
+
 在spring boot应用中，我们可以在程序启动之前执行任何任务。为了达到这个目的，我们需要使用`CommandLineRunner`或`ApplicationRunner`接口创建bean，spring boot会自动监测到它们。这两个接口都有一个`run()`方法，在实现接口时需要覆盖该方法，并使用`@Component`注解使其成为bean。`CommandLineRunner`和`ApplicationRunner`的作用是相同的。不同之处在于`CommandLineRunner`接口的`run()`方法接收String数组作为参数，而`ApplicationRunner`接口的`run()`方法接收`ApplicationArguments`对象作为参数。当程序启动时，我们传给`main()`方法的参数可以被实现`CommandLineRunner`和`ApplicationRunner`接口的类的`run()`方法访问。我们可以创建多个实现`CommandLineRunner`和`ApplicationRunner`接口的类。为了使他们按一定顺序执行，可以使用`@Order`注解或实现`Ordered`接口。
 
 `CommandLineRunner`和`ApplicationRunner`接口的`run()`方法在`SpringApplication`完成启动时执行。启动完成之后，应用开始运行。`CommandLineRunner`和`ApplicationRunner`的作用是在程序开始运行前执行任务或记录信息。

@@ -1,3 +1,9 @@
+---
+title: Spring Boot依赖引入的多种方式
+date: 2019-04-18
+categories: Spring Boot
+---
+
 使用Spring Boot开发，不可避免的会面临Maven依赖包版本的管理。
 
 有如下几种方式可以管理Spring Boot的版本。

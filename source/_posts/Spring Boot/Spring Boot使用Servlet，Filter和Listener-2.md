@@ -1,8 +1,12 @@
-在Spring Boot应用中，*Servlet*，*Filter*和*Listener*可以通过两种方式注册：一是使用Spring的`@Bean`，二是使用内置容器通过扫描`@WebServlet`，`@WebFilter`和`@WebListener`注解类。
+---
+title: Spring Boot使用Servlet，Filter和Listener-2
+date: 2019-04-18
+categories: Spring Boot
+---
 
-本文介绍如何使用`@Bean`的方式注册`Servlet`，`Filter`和`Listener`。
+上一篇文章介绍了在Spring Boot应用中如何使用`@Bean`的方式注册Servlet，Filter和Listener。
 
-可以使用`ServletRegistrationBean`，`FilterRegistrationBean`和`ServletListenerRegistrationBean`分别注册`Servlet`，`Filter`和`Listener`。
+本文介绍如何使用`@WebServlet`，`@WebFilter`和`@WebListener`注解类分别注册Servlet，Filter和Listener。
 
 ## 依赖jar包
 
@@ -48,10 +52,12 @@
 import java.io.IOException;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+@WebServlet("/myServlet")
 public class MyServlet extends HttpServlet {
 
   private static final long serialVersionUID = 1L;
@@ -90,7 +96,9 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebFilter;
 
+@WebFilter("/myServlet")
 public class MyFilter implements Filter {
 
   @Override
@@ -123,7 +131,9 @@ public class MyFilter implements Filter {
 ```
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import javax.servlet.annotation.WebListener;
 
+@WebListener
 public class MyServletContextListener implements ServletContextListener {
   @Override
   public void contextInitialized(ServletContextEvent e) {
@@ -140,55 +150,21 @@ public class MyServletContextListener implements ServletContextListener {
 
 ## 注册Servlet，Filter和Listener
 
-如上所述，可以使用`ServletRegistrationBean`，`FilterRegistrationBean`和`ServletListenerRegistrationBean`注册`Servlet`，`Filter`和`Listener`。
+注册servlet组件（如Servlet，Filter和Listener），需要使用`@ServletComponentScan`注解配置类。`@ServletComponentScan`这个注解会扫描指定包中的servlet组件。
 
-创建`SpringBootApp`类并如下声明`ServletRegistrationBean`，`FilterRegistrationBean`和`ServletListenerRegistrationBean`的bean方法。
+创建`SpringBootApp`类，并使用注解`@ServletComponentScan`和`@SpringBootApplication`。
 ```
-import javax.servlet.ServletContextListener;
-
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
-import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
-import org.springframework.boot.web.servlet.ServletRegistrationBean;
-import org.springframework.context.annotation.Bean;
-
-import com.boraji.tutorial.springboot.filter.MyFilter;
-import com.boraji.tutorial.springboot.listener.MyServletContextListener;
-import com.boraji.tutorial.springboot.servlet.MyServlet;
+import org.springframework.boot.web.servlet.ServletComponentScan;
 
 @SpringBootApplication
+@ServletComponentScan(basePackages = { 
+    "com.boraji.tutorial.springboot.servlet",
+    "com.boraji.tutorial.springboot.filter", 
+    "com.boraji.tutorial.springboot.listener"
+   })
 public class SpringBootApp {
-
-  // Register Servlet
-  @Bean
-  public ServletRegistrationBean servletRegistrationBean() {
-    ServletRegistrationBean bean = new ServletRegistrationBean(
-        new MyServlet(), "/myServlet");
-    return bean;
-  }
-
-  // Register Filter
-  @Bean
-  public FilterRegistrationBean filterRegistrationBean() {
-    FilterRegistrationBean bean = new FilterRegistrationBean(new MyFilter());
-    // Mapping filter to a Servlet
-    bean.addServletRegistrationBeans(new ServletRegistrationBean[] {
-          servletRegistrationBean() 
-       });
-    return bean;
-  }
-
-  // Register ServletContextListener
-  @Bean
-  public ServletListenerRegistrationBean<ServletContextListener> listenerRegistrationBean() {
-    ServletListenerRegistrationBean<ServletContextListener> bean = 
-        new ServletListenerRegistrationBean<>();
-    bean.setListener(new MyServletContextListener());
-    return bean;
-
-  }
-
   public static void main(String[] args) {
     SpringApplication.run(SpringBootApp.class, args);
   }
@@ -201,7 +177,5 @@ public class SpringBootApp {
 运行`SpringBootApp.java`类。可以通过`Run -> Run as -> Java Application`或者使用`mvn spring-boot：run`命令运行spring boot应用。
 
 启动成功后，在浏览器输入`http://localhost:8080/myServlet?name=Sunil%20Singh%20Bora`。
-![浏览器显示](https://upload-images.jianshu.io/upload_images/292448-37a4f186f1819b84.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-控制台输出如下：
-![控制台输出](https://upload-images.jianshu.io/upload_images/292448-1e79d010cd5b5e87.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![浏览器显示](https://upload-images.jianshu.io/upload_images/292448-8720f2ac8a37aa30.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 

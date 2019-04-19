@@ -1,3 +1,9 @@
+---
+title: Spring Boot Admin入门指南
+date: 2019-04-18
+categories: Spring Boot
+---
+
 ## Spring Boot Actuator
 Actuator是Spring Boot的模块，它在应用中添加了REST/JMS端点，方便监控和管理应用。端点提供了健康检查、指标监控、访问日志、线程转储、堆转储和环境信息等等。
 
