@@ -1,3 +1,9 @@
+---
+title: MySQL-explain详解
+date: 2019-04-19
+categories: MySQL
+---
+
 ## Explain简介
 
 本文主要讲述如何通过 explain 命令获取 select 语句的执行计划，通过 explain 我们可以知道以下信息：表的读取顺序，数据读取操作的类型，哪些索引可以使用，哪些索引实际使用了，表之间的引用，每张表有多少行被优化器查询等信息。

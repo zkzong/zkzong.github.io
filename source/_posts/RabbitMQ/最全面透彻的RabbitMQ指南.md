@@ -1,3 +1,9 @@
+---
+title: 最全面透彻的RabbitMQ指南
+date: 2019-04-19
+categories: RabbitMQ
+---
+
 ## 本文大纲
 1.  RabbitMQ 历史
 2.  RabbitMQ 应用场景

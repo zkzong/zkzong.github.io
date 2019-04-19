@@ -1,3 +1,9 @@
+---
+title: Kafka简单入门
+date: 2019-04-19
+categories: Kafka
+---
+
 ## 1.       kafka介绍
 
 ### 1.1.       主要功能

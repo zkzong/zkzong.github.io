@@ -1,3 +1,9 @@
+---
+title: MySQL使用CASE-WHEN语法判断字段为NULL的用法
+date: 2019-04-19
+categories: MySQL
+---
+
 在写sql语句时，遇到比较复杂的sql可能经常会用到`CASE WHEN`判断，`CASE WHEN`的基本语法在此不再赘述，网上有许多相关教程。
 
 **数据准备：**

@@ -1,3 +1,9 @@
+---
+title: 快速上手RocketMQ
+date: 2019-04-19
+categories: RocketMQ
+---
+
 本文介绍如何安装配置单机版的RocketMQ，以及简单地收发消息。读者也可以参考RocketMQ官网的说明文档。
 
 ## 1. RocketMQ的下载、安装和配置

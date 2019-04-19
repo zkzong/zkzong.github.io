@@ -1,3 +1,9 @@
+---
+title: RocketMQ生产环境下的配置和使用
+date: 2019-04-19
+categories: RocketMQ
+---
+
 本文的目的是带领读者快速将RocketMQ应用到生产环境中，因此不会探究原理和细节。本文会先介绍RocketMQ的各个角色，然后介绍如何搭建一个高可用的分布式消息队列集群，以及RocketMQ的Consumer和Producer的使用方法与常用命令。
 
 ## 1. RocketMQ各部分角色介绍﻿

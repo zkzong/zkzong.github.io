@@ -1,3 +1,9 @@
+---
+title: 常用SQL
+date: 2019-04-19
+categories: MySQL
+---
+
 #### 统计n年之前的数据
 |year|salary|
 |--|--|

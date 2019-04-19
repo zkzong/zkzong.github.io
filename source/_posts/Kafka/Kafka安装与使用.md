@@ -1,3 +1,9 @@
+---
+title: Kafka安装与使用
+date: 2019-04-19
+categories: Kafka
+---
+
 本文假设你是第一次使用Kafka，并且机器上不存在Kafka和ZooKeeper数据。Kafka的命令脚本在Linux和Windows平台上是不一样的，Linux的脚本存放在`bin`目录下，以`.sh`为扩展名，而Windows的脚本存放在`bin/windows`目录下，以`.bat`为扩展名。
 
 ## 1. 下载安装包
