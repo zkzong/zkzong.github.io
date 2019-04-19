@@ -1,3 +1,9 @@
+---
+title: SimpleDateFormat非线程安全
+date: 2019-04-19
+categories: 多线程
+---
+
 类SimpleDateFormat主要负责日期的转换与格式化，但在多线程的环境中，使用此类容易造成数据转换及处理的不准确，因为SimpleDateFormat类并不是线程安全的。
 
 ## 出现异常

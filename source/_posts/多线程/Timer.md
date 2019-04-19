@@ -1,3 +1,9 @@
+---
+title: Timer
+date: 2019-04-19
+categories: 多线程
+---
+
 ```
 public class Run4 {
 	static int i = 0;

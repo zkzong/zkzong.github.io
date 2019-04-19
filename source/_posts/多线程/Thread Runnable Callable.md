@@ -1,3 +1,9 @@
+---
+title: Thread Runnable Callable
+date: 2019-04-19
+categories: 多线程
+---
+
 Runnable 接口
 Thread 类
 

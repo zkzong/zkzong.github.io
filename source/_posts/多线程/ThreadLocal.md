@@ -1,3 +1,9 @@
+---
+title: ThreadLocal
+date: 2019-04-19
+categories: 多线程
+---
+
 ThreadLocal使用场合主要解决多线程中数据因并发产生不一致的问题。
 
 ThreadLocal类中一共有4个方法：
