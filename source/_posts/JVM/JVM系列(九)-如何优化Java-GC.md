@@ -1,3 +1,9 @@
+---
+title: JVM系列(九)-如何优化Java-GC
+date: 2019-04-19
+categories: JVM
+---
+
 本文由[CrowHawk](https://crowhawk.github.io/)翻译，地址：[如何优化Java GC「译」](https://crowhawk.github.io/2017/08/21/jvm_4/)，是Java GC调优的经典佳作。
 
 Sangmin Lee发表在[Cubrid](http://www.cubrid.org/blog)上的“Become a Java GC Expert”系列文章的第三篇[《How to Tune Java Garbage Collection》](http://www.cubrid.org/blog/how-to-tune-java-garbage-collection)，本文的作者是韩国人，写在JDK 1.8发布之前，虽然有些地方有些许过时，但整体内容还是非常有价值的。译者此前也看到有人翻译了本文，发现其中有许多错漏生硬和语焉不详之处，因此决定自己翻译一份，供大家分享。

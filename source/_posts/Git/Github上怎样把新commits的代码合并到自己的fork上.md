@@ -1,3 +1,9 @@
+---
+title: Github上怎样把新commits的代码合并到自己的fork上
+date: 2019-04-18
+categories: Git
+---
+
 ## 命令行模式
 
 步骤：

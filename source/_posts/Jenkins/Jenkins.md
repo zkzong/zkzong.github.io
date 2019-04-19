@@ -1,3 +1,9 @@
+---
+title: Jenkins
+date: 2019-04-18
+categories: Jenkins
+---
+
 首先从Jenkins官方网站[https://jenkins.io/](https://jenkins.io/)下载最新的war包。虽然Jenkins提供了Windows、Linux、OS X等各种安装程序，但是，这些安装程序都没有war包好使。只需要运行命令：
 ```
 java -jar jenkins.war

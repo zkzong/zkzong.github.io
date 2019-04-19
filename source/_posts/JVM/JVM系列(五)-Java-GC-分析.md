@@ -1,3 +1,9 @@
+---
+title: JVM系列(五)-Java-GC-分析
+date: 2019-04-19
+categories: JVM
+---
+
 Java GC就是JVM记录仪，书画了JVM各个分区的表演。
 
 ## 什么是 Java GC

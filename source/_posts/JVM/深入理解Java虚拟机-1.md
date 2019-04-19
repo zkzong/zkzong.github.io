@@ -1,3 +1,9 @@
+---
+title: 深入理解Java虚拟机
+date: 2019-04-19
+categories: JVM
+---
+
 # 深入理解Java虚拟机
 
 标签（空格分隔）： J2EE

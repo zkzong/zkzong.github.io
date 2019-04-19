@@ -1,3 +1,9 @@
+---
+title: Gradle使用Maven仓库
+date: 2019-04-18
+categories: Gradle
+---
+
 1. 找到maven仓库的位置并复制路径`E:\repository`。
 ![maven仓库地址](https://upload-images.jianshu.io/upload_images/292448-0499af45d4755a24.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 

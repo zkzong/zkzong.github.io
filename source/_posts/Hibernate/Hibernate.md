@@ -1,3 +1,9 @@
+---
+title: Hibernate
+date: 2019-04-18
+categories: Hibernate
+---
+
 # 1. Hibernate核心组件
 > Configuration
 > - Database Connection
