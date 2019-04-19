@@ -1,3 +1,9 @@
+---
+title: static
+date: 2019-04-18
+categories: Java
+---
+
 ```java
 public class StaticSuper {
     static {

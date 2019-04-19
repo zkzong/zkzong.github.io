@@ -1,3 +1,9 @@
+---
+title: 使用pom文件指定JDK编译版本
+date: 2019-04-18
+categories: Java
+---
+
 maven项目会用`maven-compiler-plugin`默认的JDK版本来进行编译，如果不指明版本就容易出现版本不匹配的问题，可能导致编译不通过的问题。
 
 解决办法：在pom文件中配置maven-compiler-plugin插件。

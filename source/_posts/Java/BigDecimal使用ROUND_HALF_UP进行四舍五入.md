@@ -1,3 +1,9 @@
+---
+title: BigDecimal使用ROUND_HALF_UP进行四舍五入
+date: 2019-04-18
+categories: Java
+---
+
 ```java
 BigDecimal bdTest = new BigDecimal(1.745);
 BigDecimal bdTest1 = new BigDecimal(0.745);

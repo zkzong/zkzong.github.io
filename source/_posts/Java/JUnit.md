@@ -1,3 +1,9 @@
+---
+title: Junit
+date: 2019-04-18
+categories: Java
+---
+
 - 测试方法必须使用@Test修饰
 - 测试方法必须使用public void修饰
 - 新建test源代码目录来存放测试代码

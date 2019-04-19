@@ -1,3 +1,9 @@
+---
+title: 文件和byte数组之间相互转换
+date: 2019-04-18
+categories: Java
+---
+
 ## 文件转换成byte数组
 
 文件转换成byte数组有两种方式：

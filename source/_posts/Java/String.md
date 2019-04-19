@@ -1,3 +1,9 @@
+---
+title: String
+date: 2019-04-18
+categories: Java
+---
+
 常用的字符串创建有两种方式：
 `String s = "zong";`
 `String s = new String("abc");`
