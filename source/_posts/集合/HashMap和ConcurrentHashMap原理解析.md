@@ -1,3 +1,9 @@
+---
+title: HashMap和ConcurrentHashMap原理解析
+date: 2019-04-19
+categories: 集合
+---
+
 ## 前言
 
 Map 这样 `Key Value` 的数据结构在开发中是非常经典的结构，常用于在内存中存放数据。

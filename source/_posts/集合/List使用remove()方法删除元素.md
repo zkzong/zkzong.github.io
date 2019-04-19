@@ -1,3 +1,9 @@
+---
+title: List使用remove()方法删除元素
+date: 2019-04-19
+categories: 集合
+---
+
 ```java
 public class Remove {
     public static void main(String[] args) {

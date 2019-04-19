@@ -1,3 +1,9 @@
+---
+title: HashSet LinkedHashSet TreeSet对比
+date: 2019-04-19
+categories: 集合
+---
+
 | \ |HashSet|LinkedHashSet|TreeSet|
 |:--:|--|--|--|
 |内部工作机制|HashSet内部使用HashMap存储元素|LinkedHashSet内部使用LinkedHashMap存储元素|TreeSet内部使用TreeMap存储元素|

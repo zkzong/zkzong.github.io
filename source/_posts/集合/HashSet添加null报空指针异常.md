@@ -1,3 +1,9 @@
+---
+title: HashSet添加null报空指针异常
+date: 2019-04-19
+categories: 集合
+---
+
 HashSet添加null报空指针异常。
 ```java
 public class TestSet {

@@ -1,3 +1,9 @@
+---
+title: List Set Map之间的不同
+date: 2019-04-19
+categories: 集合
+---
+
 它们都继承自**Collection**类。
 
 **10点不同：**

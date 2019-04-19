@@ -1,3 +1,9 @@
+---
+title: foreach遍历list删除元素一定会报错？
+date: 2019-04-19
+categories: 集合
+---
+
 foreach遍历list集合删除某些元素一定会报错吗？
 先上一段代码：
 ```
