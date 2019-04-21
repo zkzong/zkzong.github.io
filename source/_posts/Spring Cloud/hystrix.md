@@ -1,3 +1,9 @@
+---
+title: Hystrix
+date: 2019-04-21
+categories: Spring Cloud
+---
+
 1. Hytrix使用的两种方式
 
     1.1 通用方式整合Hytrix

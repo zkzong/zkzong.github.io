@@ -1,3 +1,9 @@
+---
+title: Spring MVC tutorialspoint
+date: 2019-04-21
+categories: Spring
+---
+
 # 1. Spring MVC简介
 Spring MVC提供model-view-controller架构和已有组件，可以开发灵活、松散耦合的web应用。MVC模式把应用分成不同的概念（输入逻辑、业务逻辑和UI逻辑），组件之间松散耦合。
 

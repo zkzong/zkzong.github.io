@@ -1,3 +1,9 @@
+---
+title: CAP理论及Zookeeper和Eureka对比
+date: 2019-04-21
+categories: Spring Cloud
+---
+
 分布式系统领域有个重要的CAP理论，该理论由加州大学伯克利分校的Eric Brewer教授提出，由麻省理工学院的Seth Gilbert和Nancy Lynch进行理论证明。该理论提到了分布式系统的CAP三个特性：
 
 ❑ Consistency：数据一致性，即数据在存在多副本的情况下，可能由于网络、机器故障、软件系统等问题导致数据写入部分副本成功，部分副本失败，进而造成副本之间数据不一致，存在冲突。满足一致性则要求对数据的更新操作成功之后，多副本的数据保持一致。

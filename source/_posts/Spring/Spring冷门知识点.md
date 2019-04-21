@@ -1,3 +1,9 @@
+---
+title: Spring冷门知识点
+date: 2019-04-21
+categories: Spring
+---
+
 PathVariable类型的参数不需要在Model中明确设置就可以在jsp中获取。
 ```
 @RequestMapping(value = "/{name}")

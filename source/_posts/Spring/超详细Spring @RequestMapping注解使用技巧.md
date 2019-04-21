@@ -1,3 +1,9 @@
+---
+title: 超详细Spring @RequestMapping注解使用技巧
+date: 2019-04-21
+categories: Spring
+---
+
 @RequestMapping 是 Spring Web 应用程序中最常被用到的注解之一。这个注解会将 HTTP 请求映射到 MVC 和 REST 控制器的处理方法上。
 
 在这篇文章中，你将会看到 @RequestMapping 注解在被用来进行 Spring MVC 控制器方法的映射可以如何发挥其多才多艺的功能的。

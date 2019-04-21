@@ -1,3 +1,9 @@
+---
+title: @ModelAttribute注解的使用
+date: 2019-04-21
+categories: Spring
+---
+
 在SpringMVC的Controller中使用`@ModelAttribute`时，其位置包括下面三种：
 + 应用在方法上
 + 应用在方法的参数上

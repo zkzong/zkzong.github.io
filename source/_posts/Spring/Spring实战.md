@@ -1,3 +1,9 @@
+---
+title: Spring实战
+date: 2019-04-21
+categories: Spring
+---
+
 ## 第1章 Spring之旅
 
 为了降低Java开发的复杂性，Spring采取了以下4种关键策略：

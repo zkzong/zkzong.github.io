@@ -1,3 +1,9 @@
+---
+title: JPA、Hibernate、Spring Data JPA之间的关系
+date: 2019-04-21
+categories: Spring
+---
+
 **什么是JPA？**
 
 全称Java Persistence API，可以通过注解或者XML描述【对象-关系表】之间的映射关系，并将实体对象持久化到数据库中。

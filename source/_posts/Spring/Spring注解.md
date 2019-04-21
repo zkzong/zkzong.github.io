@@ -1,3 +1,9 @@
+---
+title: Spring注解
+date: 2019-04-21
+categories: Spring
+---
+
 ### @ModelAttribute
 spring mvc @ModelAttribute 接收前台参数问题
 直接接收url?后面的参数，如url?id=123&name=456，可直接转换为Pojo
