@@ -1,5 +1,5 @@
 ---
-title: `@ModelAttribute注解的使用`
+title: ModelAttribute注解的使用
 date: 2019-04-21
 categories: Spring
 ---
