@@ -1,3 +1,9 @@
+---
+title: Spring Data MongoDB更新
+date: 2019-04-21
+categories: MongoDB
+---
+
 在Spring Data MongoDB中，可以使用如下方法更新文档：
 1. save - 如果`_id`存在则更新，否则插入。更新整个文档。
 2. updateFirst - 更新查询出的第一个文档。

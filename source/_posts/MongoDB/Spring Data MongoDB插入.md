@@ -1,3 +1,9 @@
+---
+title: Spring Data MongoDB插入
+date: 2019-04-21
+categories: MongoDB
+---
+
 在Spring Data MongoDB中，使用`save()`和`insert()`方法可以插入一个或多个文档到数据库。
 
 ```

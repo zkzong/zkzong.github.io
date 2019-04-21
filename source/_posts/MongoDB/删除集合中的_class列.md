@@ -1,3 +1,9 @@
+---
+title: 删除集合中的_class列
+date: 2019-04-21
+categories: MongoDB
+---
+
 默认情况下，Spring Data的`MappingMongoConverter`为MongoDb中的每个对象添加了一个额外的`_class`列。例如：
 ```
 public class User {

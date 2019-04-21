@@ -1,3 +1,9 @@
+---
+title: MongoDB权威指南
+date: 2019-04-21
+categories: MongoDB
+---
+
 # 第1章 简介
 MongoDB是面向文档的数据库。
 

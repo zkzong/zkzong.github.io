@@ -1,3 +1,9 @@
+---
+title: Java MongoDB插入
+date: 2019-04-21
+categories: MongoDB
+---
+
 本文介绍3中插入文档的方法。
 
 ## 1. 使用Document插入文档

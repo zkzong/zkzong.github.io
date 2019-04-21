@@ -1,3 +1,9 @@
+---
+title: Java MongoDB更新
+date: 2019-04-21
+categories: MongoDB
+---
+
 本文介绍如何使用`collection.update()`更新文档。
 
 ## 测试数据

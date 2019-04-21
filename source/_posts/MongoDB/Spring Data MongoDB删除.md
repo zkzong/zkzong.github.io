@@ -1,3 +1,9 @@
+---
+title: Spring Data MongoDB删除
+date: 2019-04-21
+categories: MongoDB
+---
+
 在Spring Data MongoDB中，可以使用`remove()`和`findAndRemove()`删除文档。
 
 + 1. remove() - 删除一个或多个文档。

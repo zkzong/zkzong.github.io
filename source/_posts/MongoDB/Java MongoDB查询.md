@@ -1,3 +1,9 @@
+---
+title: Java MongoDB查询
+date: 2019-04-21
+categories: MongoDB
+---
+
 本文介绍如何从集合中查询文档的通用方法。
 
 ## 测试数据

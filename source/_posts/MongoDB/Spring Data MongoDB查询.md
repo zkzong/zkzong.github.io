@@ -1,3 +1,9 @@
+---
+title: Spring Data MongoDB查询
+date: 2019-04-21
+categories: MongoDB
+---
+
 本文介绍一下使用Query、Criteria和其他常见操作查询文档的例子。
 
 **测试数据**

@@ -1,3 +1,9 @@
+---
+title: Java MongoDB保存图片
+date: 2019-04-21
+categories: MongoDB
+---
+
 本文介绍如何使用**GridFS API**把图片文件保存到MongoDB。GridFS API也能保存其他二进制文件，如视频和音乐文件。
 
 ## 1. 保存图片

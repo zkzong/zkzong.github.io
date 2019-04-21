@@ -1,3 +1,9 @@
+---
+title: 在Ubuntu上安装MongoDB
+date: 2019-04-21
+categories: MongoDB
+---
+
 ## 1. 简介
 
 可以使用`.deb`包安装MongoDB社区版，也可以使用Ubuntu自己的MongoDB包。当然官方的MongoDB包会比较新。

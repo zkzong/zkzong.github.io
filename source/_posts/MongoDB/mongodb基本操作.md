@@ -1,3 +1,9 @@
+---
+title: MongoDB基本操作
+date: 2019-04-21
+categories: MongoDB
+---
+
 本文主要介绍mongodb的一些基本操作，如创建、更新、查找、删除记录和创建索引。
 
 ## 1. 安装MongoDB

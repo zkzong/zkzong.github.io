@@ -1,3 +1,9 @@
+---
+title: Spring Data MongoDB基本操作
+date: 2019-04-21
+categories: MongoDB
+---
+
 本文主要借号如何使用Spring Data MongoDB进行CRUD操作，有两种方式：注解方式和XML方式。
 
 ## 1. 引入依赖

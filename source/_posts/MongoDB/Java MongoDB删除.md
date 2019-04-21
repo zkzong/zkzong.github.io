@@ -1,3 +1,9 @@
+---
+title: Java MongoDB删除
+date: 2019-04-21
+categories: MongoDB
+---
+
 本文介绍如何使用`collection.delete()`删除文档。
 
 ## 测试数据

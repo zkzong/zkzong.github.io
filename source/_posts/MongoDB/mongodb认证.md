@@ -1,3 +1,9 @@
+---
+title: MongoDB认证
+date: 2019-04-21
+categories: MongoDB
+---
+
 ## 简介
 
 对MongoDB进行访问控制就是在访问之前先对用户校验，只有当用户有相关权限是才能根据角色执行相关操作。

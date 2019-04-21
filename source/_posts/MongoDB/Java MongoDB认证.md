@@ -1,3 +1,9 @@
+---
+title: Java MongoDB认证
+date: 2019-04-21
+categories: MongoDB
+---
+
 默认情况下，MongoDB不需要用户名和密码即可运行。本文介绍如何使用MongoDB驱动在安全模式下连接数据库。
 
 ## 1. 安全模式下启动MongoDB

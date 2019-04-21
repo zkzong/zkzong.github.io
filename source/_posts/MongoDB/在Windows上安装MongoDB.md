@@ -1,3 +1,9 @@
+---
+title: 在Windows上安装MongoDB
+date: 2019-04-21
+categories: MongoDB
+---
+
 MongoDB的下载和安装与其他软件没有什么区别，在此不再详细介绍，可以直接去官网下载安装。
 
 作为个人学习使用，建议安装**社区版**。

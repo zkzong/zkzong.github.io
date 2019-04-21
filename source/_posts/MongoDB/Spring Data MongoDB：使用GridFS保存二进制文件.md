@@ -1,3 +1,9 @@
+---
+title: Spring Data MongoDB：使用GridFS保存二进制文件
+date: 2019-04-21
+categories: MongoDB
+---
+
 在MongoDB中，可以使用GridFS保存二进制文件。本文介绍如何使用`GridFsTemplate`保存和读取图片文件。
 
 ## 1. GridFS - 保存（使用Spring注解方式）

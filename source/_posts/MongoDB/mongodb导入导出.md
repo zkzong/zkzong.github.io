@@ -1,3 +1,9 @@
+---
+title: MongoDB导入导出
+date: 2019-04-21
+categories: MongoDB
+---
+
 本文介绍使用`mongoexport`和`mongoimport`命令备份和恢复数据。
 
 ## 1. 使用`mongoexport`命令备份数据库

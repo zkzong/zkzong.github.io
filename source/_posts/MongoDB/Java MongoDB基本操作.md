@@ -1,3 +1,9 @@
+---
+title: Java MongoDB基本操作
+date: 2019-04-21
+categories: MongoDB
+---
+
 本文介绍如何使用Java操作MongoDB，如创建连接数据库、集合和文档，保存、更新、删除和查询文档。
 
 ## 1. 引入依赖
