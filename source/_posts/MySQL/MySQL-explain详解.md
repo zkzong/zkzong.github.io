@@ -69,7 +69,7 @@ mysql> explain select * from actor;
 
 explain 有两个变种：
 
-1）**explain extended**：会在 explain  的基础上额外提供一些查询优化的信息。紧随其后通过 show warnings 命令可以得到优化后的查询语句，从而看出优化器优化了什么。额外还有 filtered 列，是一个半分比的值，rows * filtered/100 可以估算出将要和 explain 中前一个表进行连接的行数（前一个表指 explain 中的id值比当前表id值小的表）。
+1）**explain extended**：会在 explain  的基础上额外提供一些查询优化的信息。紧随其后通过 show warnings 命令可以得到优化后的查询语句，从而看出优化器优化了什么。额外还有 filtered 列，是一个百分比的值，rows * filtered/100 可以估算出将要和 explain 中前一个表进行连接的行数（前一个表指 explain 中的id值比当前表id值小的表）。
 
 ```sql
 mysql> explain extended select * from film where id = 1;
@@ -136,7 +136,7 @@ mysql> explain select 1 union all select 1;
 +----+--------------+------------+------+---------------+------+---------+------+------+-----------------+
 ```
 
-union结果总是放在一个匿名临时表中，临时表不在SQL总出现，因此它的id是NULL。
+union结果总是放在一个匿名临时表中，临时表不在SQL中出现，因此它的id是NULL。
 
 ### 2. select_type列
 
