@@ -1,5 +1,5 @@
 ---
-title: MySQL-explain详解
+title: MySQL explain详解
 date: 2019-04-19
 categories: MySQL
 ---

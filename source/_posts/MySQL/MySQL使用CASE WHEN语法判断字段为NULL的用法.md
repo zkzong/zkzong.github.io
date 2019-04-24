@@ -1,5 +1,5 @@
 ---
-title: MySQL使用CASE-WHEN语法判断字段为NULL的用法
+title: MySQL使用CASE WHEN语法判断字段为NULL的用法
 date: 2019-04-19
 categories: MySQL
 ---
