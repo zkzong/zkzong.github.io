@@ -1,3 +1,9 @@
+---
+title: iBATIS
+date: 2019-05-14
+categories: MyBatis
+---
+
 **（针对iBATIS 2.x版本）**
 # 1. 简介
 iBATIS是一个ORM框架，它和其它框架（如Hibernate）的最大不同是：iBATIS强调SQL的使用，而其它框架使用自定义的查询语言如HQL。

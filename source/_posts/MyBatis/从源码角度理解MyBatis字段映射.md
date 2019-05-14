@@ -1,3 +1,9 @@
+---
+title: 从源码角度理解MyBatis字段映射
+date: 2019-05-14
+categories: MyBatis
+---
+
 MyBatis在转换查询结果到需要的Java业务对象时做了三件事：
 
 1. 解决了数据库列名到Java列名的映射。
