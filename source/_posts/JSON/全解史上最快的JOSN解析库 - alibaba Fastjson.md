@@ -721,6 +721,4 @@ public RedisTemplate redisTemplate(RedisConnectionFactory redisConnectionFactory
 通常使用 `GenericFastJsonRedisSerializer` 即可满足大部分场景，如果你想定义特定类型专用的 RedisTemplate 可以使用 `FastJsonRedisSerializer`来代替 `GenericFastJsonRedisSerializer`，配置是类似的。
 
 参考：[https://github.com/alibaba/fastjson/wiki](https://github.com/alibaba/fastjson/wiki)
-[[https://www.cnblogs.com/jajian/p/10051901.html](https://www.cnblogs.com/jajian/p/10051901.html)
-]([https://www.cnblogs.com/jajian/p/10051901.html](https://www.cnblogs.com/jajian/p/10051901.html)
-)
+[https://www.cnblogs.com/jajian/p/10051901.html](https://www.cnblogs.com/jajian/p/10051901.html)
