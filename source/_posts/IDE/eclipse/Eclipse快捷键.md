@@ -21,3 +21,10 @@ categories: eclipse
 |Ctrl+Shift+T|打开Open Type，查找类文件|
 |Ctrl+Shift+R|打开Open Resource，查找文件|
 |Ctrl+Shift+G|查看变量或方法被调用的地方|
+|shift+alt+s，再按r|生成set、get方法|
+|shift+ctrl+o|导入所有没导入的包|
+|shift+ctrl+m|导入你鼠标当前所在的地方的未导入的包|
+|main+Alt+/|main方法|
+|syso+Alt+/|System.out.println();|
+
+
