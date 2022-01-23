@@ -1,0 +1,1437 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="（针对iBATIS 2.x版本） 1. 简介iBATIS是一个ORM框架，它和其它框架（如Hibernate）的最大不同是：iBATIS强调SQL的使用，而其它框架使用自定义的查询语言如HQL。 2. 环境配置 创建EMPLOYEE表，SQL语句如下：1234567CREATE TABLE EMPLOYEE (    id INT NOT NULL auto_increment,    first">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iBATIS">
+<meta property="og:url" content="http://yoursite.com/2019/05/14/MyBatis/iBATIS/index.html">
+<meta property="og:site_name" content="Zong&#39;s Blog">
+<meta property="og:description" content="（针对iBATIS 2.x版本） 1. 简介iBATIS是一个ORM框架，它和其它框架（如Hibernate）的最大不同是：iBATIS强调SQL的使用，而其它框架使用自定义的查询语言如HQL。 2. 环境配置 创建EMPLOYEE表，SQL语句如下：1234567CREATE TABLE EMPLOYEE (    id INT NOT NULL auto_increment,    first">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2022-01-06T13:21:26.299Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iBATIS">
+<meta name="twitter:description" content="（针对iBATIS 2.x版本） 1. 简介iBATIS是一个ORM框架，它和其它框架（如Hibernate）的最大不同是：iBATIS强调SQL的使用，而其它框架使用自定义的查询语言如HQL。 2. 环境配置 创建EMPLOYEE表，SQL语句如下：1234567CREATE TABLE EMPLOYEE (    id INT NOT NULL auto_increment,    first">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://yoursite.com/2019/05/14/MyBatis/iBATIS/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>iBATIS | Zong's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Zong's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">技术博客</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/05/14/MyBatis/iBATIS/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Zong">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Zong's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">iBATIS
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-05-14 00:00:00" itemprop="dateCreated datePublished" datetime="2019-05-14T00:00:00+08:00">2019-05-14</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2022-01-06 21:21:26" itemprop="dateModified" datetime="2022-01-06T21:21:26+08:00">2022-01-06</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/MyBatis/" itemprop="url" rel="index"><span itemprop="name">MyBatis</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+            <span id="/2019/05/14/MyBatis/iBATIS/" class="leancloud_visitors" data-flag-title="iBATIS">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读次数：</span>
+              
+                <span class="leancloud-visitors-count"></span>
+            </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><strong>（针对iBATIS 2.x版本）</strong></p>
+<h1 id="1-简介"><a href="#1-简介" class="headerlink" title="1. 简介"></a>1. 简介</h1><p>iBATIS是一个ORM框架，它和其它框架（如Hibernate）的最大不同是：iBATIS强调SQL的使用，而其它框架使用自定义的查询语言如HQL。</p>
+<h1 id="2-环境配置"><a href="#2-环境配置" class="headerlink" title="2. 环境配置"></a>2. 环境配置</h1><ol>
+<li>创建EMPLOYEE表，SQL语句如下：<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> EMPLOYEE (</span><br><span class="line">    <span class="keyword">id</span> <span class="built_in">INT</span> <span class="keyword">NOT</span> <span class="literal">NULL</span> auto_increment,</span><br><span class="line">    first_name <span class="built_in">VARCHAR</span>(<span class="number">20</span>) <span class="keyword">default</span> <span class="literal">NULL</span>,</span><br><span class="line">    last_name <span class="built_in">VARCHAR</span>(<span class="number">20</span>) <span class="keyword">default</span> <span class="literal">NULL</span>,</span><br><span class="line">    salary <span class="built_in">INT</span> <span class="keyword">default</span> <span class="literal">NULL</span>,</span><br><span class="line">    PRIMARY <span class="keyword">KEY</span> (<span class="keyword">id</span>)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>创建EMPLOYEE表。</p>
+<ol start="2">
+<li>创建SqlMapConfig.xml<br>此文件配置数据库连接等信息。<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE sqlMapConfig</span></span><br><span class="line"><span class="meta">PUBLIC "-//ibatis.apache.org//DTD SQL Map Config 2.0//EN"</span></span><br><span class="line"><span class="meta">"http://ibatis.apache.org/dtd/sql-map-config-2.dtd"&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">sqlMapConfig</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">settings</span> <span class="attr">useStatementNamespaces</span>=<span class="string">"true"</span> /&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">transactionManager</span> <span class="attr">type</span>=<span class="string">"JDBC"</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">dataSource</span> <span class="attr">type</span>=<span class="string">"SIMPLE"</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"JDBC.Driver"</span> <span class="attr">value</span>=<span class="string">"com.mysql.jdbc.Driver"</span> /&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"JDBC.ConnectionURL"</span> <span class="attr">value</span>=<span class="string">"jdbc:mysql://localhost:3306/test"</span> /&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"JDBC.Username"</span> <span class="attr">value</span>=<span class="string">"root"</span> /&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"JDBC.Password"</span> <span class="attr">value</span>=<span class="string">"root"</span> /&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">dataSource</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">transactionManager</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">sqlMap</span> <span class="attr">resource</span>=<span class="string">"Employee.xml"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">sqlMapConfig</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>以下是一些可选的配置信息：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"JDBC.AutoCommit"</span> <span class="attr">value</span>=<span class="string">"true"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"Pool.MaximumActiveConnections"</span> <span class="attr">value</span>=<span class="string">"10"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"Pool.MaximumIdleConnections"</span> <span class="attr">value</span>=<span class="string">"5"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"Pool.MaximumCheckoutTime"</span> <span class="attr">value</span>=<span class="string">"150000"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"Pool.MaximumTimeToWait"</span> <span class="attr">value</span>=<span class="string">"500"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"Pool.PingQuery"</span> <span class="attr">value</span>=<span class="string">"select 1 from Employee"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"Pool.PingEnabled"</span> <span class="attr">value</span>=<span class="string">"false"</span>/&gt;</span></span><br></pre></td></tr></table></figure></p>
+<h1 id="3-CREATE操作"><a href="#3-CREATE操作" class="headerlink" title="3. CREATE操作"></a>3. CREATE操作</h1><ol>
+<li><p>Employee POJO类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.zkzong.ibatis;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Employee</span> </span>&#123;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">int</span> id;</span><br><span class="line">	<span class="keyword">private</span> String first_name;</span><br><span class="line">	<span class="keyword">private</span> String last_name;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">int</span> salary;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Define constructors for the Employee class. */</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">Employee</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">Employee</span><span class="params">(String fname, String lname, <span class="keyword">int</span> salary)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.first_name = fname;</span><br><span class="line">		<span class="keyword">this</span>.last_name = lname;</span><br><span class="line">		<span class="keyword">this</span>.salary = salary;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getId</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> id;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setId</span><span class="params">(<span class="keyword">int</span> id)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.id = id;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getFirstName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> first_name;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setFirstName</span><span class="params">(String fname)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.first_name = fname;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getLastName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> last_name;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setlastName</span><span class="params">(String lname)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.last_name = lname;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getSalary</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> salary;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setSalary</span><span class="params">(<span class="keyword">int</span> salary)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.salary = salary;</span><br><span class="line">	&#125;</span><br><span class="line">&#125; <span class="comment">/* End of Employee */</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>创建Employee.xml</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE sqlMap</span></span><br><span class="line"><span class="meta">PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"</span></span><br><span class="line"><span class="meta">"http://ibatis.apache.org/dtd/sql-map-2.dtd"&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">sqlMap</span> <span class="attr">namespace</span>=<span class="string">"Employee"</span>&gt;</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">&lt;!-- Perform Insert Operation --&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">insert</span> <span class="attr">id</span>=<span class="string">"insert"</span> <span class="attr">parameterClass</span>=<span class="string">"com.zkzong.ibatis.Employee"</span>&gt;</span></span><br><span class="line">	</span><br><span class="line">		insert into EMPLOYEE(first_name, last_name, salary)</span><br><span class="line">		values (#first_name#, #last_name#, #salary#)</span><br><span class="line">		</span><br><span class="line">		<span class="tag">&lt;<span class="name">selectKey</span> <span class="attr">resultClass</span>=<span class="string">"int"</span> <span class="attr">keyProperty</span>=<span class="string">"id"</span>&gt;</span></span><br><span class="line">			select last_insert_id() as id</span><br><span class="line">		<span class="tag">&lt;/<span class="name">selectKey</span>&gt;</span></span><br><span class="line">		</span><br><span class="line">	<span class="tag">&lt;/<span class="name">insert</span>&gt;</span></span><br><span class="line">	</span><br><span class="line"><span class="tag">&lt;/<span class="name">sqlMap</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>parameterClass可以是string、int、float、double或其他类对象。本例中我们在调用insert方法传入Employee作为参数。<br>如果数据库表使用了IDENTITY、AUTO_INCREMENT、SERIAL或定义了SEQUENCE/GENERATOR，可以在<insert>中使用<selectkey>来使用或返回数据库生成的值。</selectkey></insert></p>
+<ol start="3">
+<li>IbatisInsert.java<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.zkzong.ibatis;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.io.Reader;</span><br><span class="line"><span class="keyword">import</span> java.sql.SQLException;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.ibatis.common.resources.Resources;</span><br><span class="line"><span class="keyword">import</span> com.ibatis.sqlmap.client.SqlMapClient;</span><br><span class="line"><span class="keyword">import</span> com.ibatis.sqlmap.client.SqlMapClientBuilder;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">IbatisInsert</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException, SQLException </span>&#123;</span><br><span class="line">		Reader rd = Resources.getResourceAsReader(<span class="string">"SqlMapConfig.xml"</span>);</span><br><span class="line">		SqlMapClient smc = SqlMapClientBuilder.buildSqlMapClient(rd);</span><br><span class="line">		</span><br><span class="line">		<span class="comment">/* This would insert one record in Employee table. */</span></span><br><span class="line">		System.out.println(<span class="string">"Going to insert record....."</span>);</span><br><span class="line">		Employee em = <span class="keyword">new</span> Employee(<span class="string">"Zara"</span>, <span class="string">"Ali"</span>, <span class="number">5000</span>);</span><br><span class="line">		</span><br><span class="line">		smc.insert(<span class="string">"Employee.insert"</span>, em);</span><br><span class="line">		</span><br><span class="line">		System.out.println(<span class="string">"Record Inserted Successfully "</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h1 id="4-READ操作"><a href="#4-READ操作" class="headerlink" title="4. READ操作"></a>4. READ操作</h1><ol>
+<li><p>Employee.xml</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE sqlMap</span></span><br><span class="line"><span class="meta">PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"</span></span><br><span class="line"><span class="meta">"http://ibatis.apache.org/dtd/sql-map-2.dtd"&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">sqlMap</span> <span class="attr">namespace</span>=<span class="string">"Employee"</span>&gt;</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">&lt;!-- Perform Read Operation --&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">"getAll"</span> <span class="attr">resultClass</span>=<span class="string">"com.zkzong.ibatis.Employee"</span>&gt;</span></span><br><span class="line">		SELECT * FROM EMPLOYEE</span><br><span class="line">	<span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">sqlMap</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>IbatisRead.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.zkzong.ibatis;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.io.Reader;</span><br><span class="line"><span class="keyword">import</span> java.sql.SQLException;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.ibatis.common.resources.Resources;</span><br><span class="line"><span class="keyword">import</span> com.ibatis.sqlmap.client.SqlMapClient;</span><br><span class="line"><span class="keyword">import</span> com.ibatis.sqlmap.client.SqlMapClientBuilder;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">IbatisRead</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException, SQLException </span>&#123;</span><br><span class="line">		Reader rd = Resources.getResourceAsReader(<span class="string">"SqlMapConfig.xml"</span>);</span><br><span class="line">		SqlMapClient smc = SqlMapClientBuilder.buildSqlMapClient(rd);</span><br><span class="line">		</span><br><span class="line">		<span class="comment">/* This would read all records from the Employee table. */</span></span><br><span class="line">		System.out.println(<span class="string">"Going to read records....."</span>);</span><br><span class="line">		List&lt;Employee&gt; ems = (List&lt;Employee&gt;) smc.queryForList(<span class="string">"Employee.getAll"</span>, <span class="keyword">null</span>);</span><br><span class="line">		Employee em = <span class="keyword">null</span>;</span><br><span class="line">		<span class="keyword">for</span> (Employee e : ems) &#123;</span><br><span class="line">			System.out.print(<span class="string">" "</span> + e.getId());</span><br><span class="line">			System.out.print(<span class="string">" "</span> + e.getFirstName());</span><br><span class="line">			System.out.print(<span class="string">" "</span> + e.getLastName());</span><br><span class="line">			System.out.print(<span class="string">" "</span> + e.getSalary());</span><br><span class="line">			em = e;</span><br><span class="line">			System.out.println(<span class="string">""</span>);</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		System.out.println(<span class="string">"Records Read Successfully "</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h1 id="5-UPDATE操作"><a href="#5-UPDATE操作" class="headerlink" title="5. UPDATE操作"></a>5. UPDATE操作</h1><ol>
+<li><p>Employee.xml</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE sqlMap</span></span><br><span class="line"><span class="meta">PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"</span></span><br><span class="line"><span class="meta">"http://ibatis.apache.org/dtd/sql-map-2.dtd"&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">sqlMap</span> <span class="attr">namespace</span>=<span class="string">"Employee"</span>&gt;</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">&lt;!-- Perform Update Operation --&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">update</span> <span class="attr">id</span>=<span class="string">"update"</span> <span class="attr">parameterClass</span>=<span class="string">"com.zkzong.ibatis.Employee"</span>&gt;</span></span><br><span class="line">		UPDATE EMPLOYEE</span><br><span class="line">		SET first_name = #first_name#</span><br><span class="line">		WHERE id = #id#</span><br><span class="line">	<span class="tag">&lt;/<span class="name">update</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">sqlMap</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>IbatisUpdate.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.zkzong.ibatis;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.io.Reader;</span><br><span class="line"><span class="keyword">import</span> java.sql.SQLException;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.ibatis.common.resources.Resources;</span><br><span class="line"><span class="keyword">import</span> com.ibatis.sqlmap.client.SqlMapClient;</span><br><span class="line"><span class="keyword">import</span> com.ibatis.sqlmap.client.SqlMapClientBuilder;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">IbatisUpdate</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException, SQLException </span>&#123;</span><br><span class="line">		Reader rd = Resources.getResourceAsReader(<span class="string">"SqlMapConfig.xml"</span>);</span><br><span class="line">		SqlMapClient smc = SqlMapClientBuilder.buildSqlMapClient(rd);</span><br><span class="line">		</span><br><span class="line">		<span class="comment">/* This would update one record in Employee table. */</span></span><br><span class="line">		System.out.println(<span class="string">"Going to update record....."</span>);</span><br><span class="line">		Employee rec = <span class="keyword">new</span> Employee();</span><br><span class="line">		rec.setId(<span class="number">1</span>);</span><br><span class="line">		rec.setFirstName(<span class="string">"Roma"</span>);</span><br><span class="line">		smc.update(<span class="string">"Employee.update"</span>, rec);</span><br><span class="line">		System.out.println(<span class="string">"Record updated Successfully "</span>);</span><br><span class="line">		</span><br><span class="line">		System.out.println(<span class="string">"Going to read records....."</span>);</span><br><span class="line">		List&lt;Employee&gt; ems = (List&lt;Employee&gt;) smc.queryForList(<span class="string">"Employee.getAll"</span>, <span class="keyword">null</span>);</span><br><span class="line">		Employee em = <span class="keyword">null</span>;</span><br><span class="line">		<span class="keyword">for</span> (Employee e : ems) &#123;</span><br><span class="line">			System.out.print(<span class="string">" "</span> + e.getId());</span><br><span class="line">			System.out.print(<span class="string">" "</span> + e.getFirstName());</span><br><span class="line">			System.out.print(<span class="string">" "</span> + e.getLastName());</span><br><span class="line">			System.out.print(<span class="string">" "</span> + e.getSalary());</span><br><span class="line">			em = e;</span><br><span class="line">			System.out.println(<span class="string">""</span>);</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		System.out.println(<span class="string">"Records Read Successfully "</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h1 id="6-DELETE操作"><a href="#6-DELETE操作" class="headerlink" title="6. DELETE操作"></a>6. DELETE操作</h1><ol>
+<li><p>Employee.xml</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE sqlMap</span></span><br><span class="line"><span class="meta">PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"</span></span><br><span class="line"><span class="meta">"http://ibatis.apache.org/dtd/sql-map-2.dtd"&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">sqlMap</span> <span class="attr">namespace</span>=<span class="string">"Employee"</span>&gt;</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">&lt;!-- Perform Delete Operation --&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">delete</span> <span class="attr">id</span>=<span class="string">"delete"</span> <span class="attr">parameterClass</span>=<span class="string">"int"</span>&gt;</span></span><br><span class="line">		DELETE FROM EMPLOYEE</span><br><span class="line">		WHERE id = #id#</span><br><span class="line">	<span class="tag">&lt;/<span class="name">delete</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">sqlMap</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>IbatisDelete.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.zkzong.ibatis;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.io.Reader;</span><br><span class="line"><span class="keyword">import</span> java.sql.SQLException;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.ibatis.common.resources.Resources;</span><br><span class="line"><span class="keyword">import</span> com.ibatis.sqlmap.client.SqlMapClient;</span><br><span class="line"><span class="keyword">import</span> com.ibatis.sqlmap.client.SqlMapClientBuilder;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">IbatisDelete</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException, SQLException </span>&#123;</span><br><span class="line">		Reader rd = Resources.getResourceAsReader(<span class="string">"SqlMapConfig.xml"</span>);</span><br><span class="line">		SqlMapClient smc = SqlMapClientBuilder.buildSqlMapClient(rd);</span><br><span class="line">		</span><br><span class="line">		<span class="comment">/* This would delete one record in Employee table. */</span></span><br><span class="line">		System.out.println(<span class="string">"Going to delete record....."</span>);</span><br><span class="line">		<span class="keyword">int</span> id = <span class="number">1</span>;</span><br><span class="line">		</span><br><span class="line">		smc.delete(<span class="string">"Employee.delete"</span>, id);</span><br><span class="line">		System.out.println(<span class="string">"Record deleted Successfully "</span>);</span><br><span class="line">		</span><br><span class="line">		System.out.println(<span class="string">"Going to read records....."</span>);</span><br><span class="line">		List&lt;Employee&gt; ems = (List&lt;Employee&gt;) smc.queryForList(</span><br><span class="line">				<span class="string">"Employee.getAll"</span>, <span class="keyword">null</span>);</span><br><span class="line">		Employee em = <span class="keyword">null</span>;</span><br><span class="line">		<span class="keyword">for</span> (Employee e : ems) &#123;</span><br><span class="line">			System.out.print(<span class="string">" "</span> + e.getId());</span><br><span class="line">			System.out.print(<span class="string">" "</span> + e.getFirstName());</span><br><span class="line">			System.out.print(<span class="string">" "</span> + e.getLastName());</span><br><span class="line">			System.out.print(<span class="string">" "</span> + e.getSalary());</span><br><span class="line">			em = e;</span><br><span class="line">			System.out.println(<span class="string">""</span>);</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		System.out.println(<span class="string">"Records Read Successfully "</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h1 id="7-RESULT-MAPS"><a href="#7-RESULT-MAPS" class="headerlink" title="7. RESULT MAPS"></a>7. RESULT MAPS</h1><p>resultMap是iBATIS中最重要的元素。使用iBATIS ResultMap最多可以减少90%的JDBC编码，甚至可以实现JDBC不支持的操作。</p>
+<ol>
+<li><p>Employee.xml</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE sqlMap</span></span><br><span class="line"><span class="meta">PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"</span></span><br><span class="line"><span class="meta">"http://ibatis.apache.org/dtd/sql-map-2.dtd"&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">sqlMap</span> <span class="attr">namespace</span>=<span class="string">"Employee"</span>&gt;</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">&lt;!-- Using ResultMap --&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">resultMap</span> <span class="attr">id</span>=<span class="string">"result"</span> <span class="attr">class</span>=<span class="string">"com.zkzong.ibatis.Employee"</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">result</span> <span class="attr">property</span>=<span class="string">"id"</span> <span class="attr">column</span>=<span class="string">"id"</span>/&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">result</span> <span class="attr">property</span>=<span class="string">"first_name"</span> <span class="attr">column</span>=<span class="string">"first_name"</span>/&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">result</span> <span class="attr">property</span>=<span class="string">"last_name"</span> <span class="attr">column</span>=<span class="string">"last_name"</span>/&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">result</span> <span class="attr">property</span>=<span class="string">"salary"</span> <span class="attr">column</span>=<span class="string">"salary"</span>/&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">resultMap</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">"useResultMap"</span> <span class="attr">resultMap</span>=<span class="string">"result"</span>&gt;</span></span><br><span class="line">		SELECT * FROM EMPLOYEE</span><br><span class="line">		WHERE id=#id#</span><br><span class="line">	<span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br><span class="line">	</span><br><span class="line"><span class="tag">&lt;/<span class="name">sqlMap</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>IbatisResultMap.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.zkzong.ibatis;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.io.Reader;</span><br><span class="line"><span class="keyword">import</span> java.sql.SQLException;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.ibatis.common.resources.Resources;</span><br><span class="line"><span class="keyword">import</span> com.ibatis.sqlmap.client.SqlMapClient;</span><br><span class="line"><span class="keyword">import</span> com.ibatis.sqlmap.client.SqlMapClientBuilder;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">IbatisResultMap</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException, SQLException </span>&#123;</span><br><span class="line">		Reader rd = Resources.getResourceAsReader(<span class="string">"SqlMapConfig.xml"</span>);</span><br><span class="line">		SqlMapClient smc = SqlMapClientBuilder.buildSqlMapClient(rd);</span><br><span class="line">		</span><br><span class="line">		<span class="keyword">int</span> id = <span class="number">2</span>;</span><br><span class="line">		System.out.println(<span class="string">"Going to read record....."</span>);</span><br><span class="line">		Employee e = (Employee) smc.queryForObject(<span class="string">"Employee.useResultMap"</span>, id);</span><br><span class="line">		</span><br><span class="line">		System.out.println(<span class="string">"ID: "</span> + e.getId());</span><br><span class="line">		System.out.println(<span class="string">"First Name: "</span> + e.getFirstName());</span><br><span class="line">		System.out.println(<span class="string">"Last Name: "</span> + e.getLastName());</span><br><span class="line">		System.out.println(<span class="string">"Salary: "</span> + e.getSalary());</span><br><span class="line">		</span><br><span class="line">		System.out.println(<span class="string">"Record read Successfully "</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h1 id="8-存储过程"><a href="#8-存储过程" class="headerlink" title="8. 存储过程"></a>8. 存储过程</h1><h1 id="9-动态SQL"><a href="#9-动态SQL" class="headerlink" title="9. 动态SQL"></a>9. 动态SQL</h1><p>动态SQL是iBATIS非常重要的特性。有时需要改变WHERE语句的查询条件，在这种情况下iBATIS提供了一系列的动态SQL标签用来映射条件以加强SQL的可重用性和灵活性。<br>所有的逻辑都是放在.XML文件的标签里。</p>
+<ol>
+<li><p>Employee.xml</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE sqlMap</span></span><br><span class="line"><span class="meta">PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"</span></span><br><span class="line"><span class="meta">"http://ibatis.apache.org/dtd/sql-map-2.dtd"&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">sqlMap</span> <span class="attr">namespace</span>=<span class="string">"Employee"</span>&gt;</span></span><br><span class="line"></span><br><span class="line">	<span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">"findByID"</span> <span class="attr">resultClass</span>=<span class="string">"com.zkzong.ibatis.Employee"</span>&gt;</span></span><br><span class="line">		SELECT * FROM EMPLOYEE</span><br><span class="line">		<span class="tag">&lt;<span class="name">dynamic</span> <span class="attr">prepend</span>=<span class="string">"WHERE "</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">isNull</span> <span class="attr">property</span>=<span class="string">"id"</span>&gt;</span></span><br><span class="line">				id IS NULL</span><br><span class="line">			<span class="tag">&lt;/<span class="name">isNull</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">isNotNull</span> <span class="attr">property</span>=<span class="string">"id"</span>&gt;</span></span><br><span class="line">				id = #id#</span><br><span class="line">			<span class="tag">&lt;/<span class="name">isNotNull</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">dynamic</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">sqlMap</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>IbatisReadDy.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.zkzong.ibatis;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.io.Reader;</span><br><span class="line"><span class="keyword">import</span> java.sql.SQLException;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.ibatis.common.resources.Resources;</span><br><span class="line"><span class="keyword">import</span> com.ibatis.sqlmap.client.SqlMapClient;</span><br><span class="line"><span class="keyword">import</span> com.ibatis.sqlmap.client.SqlMapClientBuilder;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">IbatisReadDy</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException, SQLException </span>&#123;</span><br><span class="line">		Reader rd = Resources.getResourceAsReader(<span class="string">"SqlMapConfig.xml"</span>);</span><br><span class="line">		SqlMapClient smc = SqlMapClientBuilder.buildSqlMapClient(rd);</span><br><span class="line">		</span><br><span class="line">		<span class="comment">/* This would read all records from the Employee table. */</span></span><br><span class="line">		System.out.println(<span class="string">"Going to read records....."</span>);</span><br><span class="line">		Employee rec = <span class="keyword">new</span> Employee();</span><br><span class="line">		rec.setId(<span class="number">2</span>);</span><br><span class="line">		</span><br><span class="line">		List&lt;Employee&gt; ems = (List&lt;Employee&gt;) smc.queryForList(</span><br><span class="line">				<span class="string">"Employee.findByID"</span>, rec);</span><br><span class="line">		Employee em = <span class="keyword">null</span>;</span><br><span class="line">		<span class="keyword">for</span> (Employee e : ems) &#123;</span><br><span class="line">			System.out.print(<span class="string">" "</span> + e.getId());</span><br><span class="line">			System.out.print(<span class="string">" "</span> + e.getFirstName());</span><br><span class="line">			System.out.print(<span class="string">" "</span> + e.getLastName());</span><br><span class="line">			System.out.print(<span class="string">" "</span> + e.getSalary());</span><br><span class="line">			em = e;</span><br><span class="line">			System.out.println(<span class="string">""</span>);</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		System.out.println(<span class="string">"Records Read Successfully "</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>iBATIS OGNL表达式<br>iBATIS提供强大的OGNL表达式以减少其他元素。</p>
+</li>
+</ol>
+<ul>
+<li>if</li>
+<li>choose, when, otherwise</li>
+<li>where</li>
+<li>foreach<br><strong>if语句</strong><br>动态SQL中最常用的是在where子句中包含条件：<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">"findActiveBlogWithTitleLike"</span> <span class="attr">parameterType</span>=<span class="string">"Blog"</span> <span class="attr">resultType</span>=<span class="string">"Blog"</span>&gt;</span></span><br><span class="line">    SELECT * FROM BLOG</span><br><span class="line">    WHERE state = 'ACTIVE.</span><br><span class="line">    <span class="tag">&lt;<span class="name">if</span> <span class="attr">test</span>=<span class="string">"title != null"</span>&gt;</span></span><br><span class="line">        AND title like #&#123;title&#125;</span><br><span class="line">    <span class="tag">&lt;/<span class="name">if</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>这个语句提供可选的文本查询功能。如果传入的title为空，返回所有的active Blog。如果传入的title不为空，根据like条件查询。<br>可以包含多个if语句：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">"findActiveBlogWithTitleLike"</span> <span class="attr">parameterType</span>=<span class="string">"Blog"</span> <span class="attr">resultType</span>=<span class="string">"Blog"</span>&gt;</span></span><br><span class="line">    SELECT * FROM BLOG</span><br><span class="line">    WHERE state = 'ACTIVE.</span><br><span class="line">    <span class="tag">&lt;<span class="name">if</span> <span class="attr">test</span>=<span class="string">"title != null"</span>&gt;</span></span><br><span class="line">        AND title like #&#123;title&#125;</span><br><span class="line">    <span class="tag">&lt;/<span class="name">if</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">if</span> <span class="attr">test</span>=<span class="string">"author != null"</span>&gt;</span></span><br><span class="line">        AND author like #&#123;author&#125;</span><br><span class="line">    <span class="tag">&lt;/<span class="name">if</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p><strong>choose, when, otherwise语句</strong><br>iBATIS中的<strong>choose</strong>和Java中的switch语句类似，选择其中一个执行。<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">"findActiveBlogWithTitleLike"</span></span></span><br><span class="line"><span class="tag"><span class="attr">parameterType</span>=<span class="string">"Blog"</span> <span class="attr">resultType</span>=<span class="string">"Blog"</span>&gt;</span></span><br><span class="line">    SELECT * FROM BLOG</span><br><span class="line">    WHERE state = 'ACTIVE'</span><br><span class="line">    <span class="tag">&lt;<span class="name">choose</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">when</span> <span class="attr">test</span>=<span class="string">"title != null"</span>&gt;</span></span><br><span class="line">            AND title like #&#123;title&#125;</span><br><span class="line">        <span class="tag">&lt;/<span class="name">when</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">when</span> <span class="attr">test</span>=<span class="string">"author != null and author.name != null"</span>&gt;</span></span><br><span class="line">            AND author like #&#123;author&#125;</span><br><span class="line">        <span class="tag">&lt;/<span class="name">when</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">otherwise</span>&gt;</span></span><br><span class="line">            AND featured = 1</span><br><span class="line">        <span class="tag">&lt;/<span class="name">otherwise</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">choose</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p><strong>where语句</strong><br>如果条件中没有符合的，可能会出现这样的SQL:<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> BLOG</span><br><span class="line"><span class="keyword">WHERE</span></span><br></pre></td></tr></table></figure></p>
+<p>这个SQL会执行失败，如果改为以下的代码就可以执行：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">"findActiveBlogLike"</span></span></span><br><span class="line"><span class="tag"><span class="attr">parameterType</span>=<span class="string">"Blog"</span> <span class="attr">resultType</span>=<span class="string">"Blog"</span>&gt;</span></span><br><span class="line">    SELECT * FROM BLOG</span><br><span class="line">    <span class="tag">&lt;<span class="name">where</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">if</span> <span class="attr">test</span>=<span class="string">"state != null"</span>&gt;</span></span><br><span class="line">            state = #&#123;state&#125;</span><br><span class="line">        <span class="tag">&lt;/<span class="name">if</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">if</span> <span class="attr">test</span>=<span class="string">"title != null"</span>&gt;</span></span><br><span class="line">            AND title like #&#123;title&#125;</span><br><span class="line">        <span class="tag">&lt;/<span class="name">if</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">if</span> <span class="attr">test</span>=<span class="string">"author != null&gt;</span></span></span><br><span class="line"><span class="tag"><span class="string">            AND author like #&#123;author&#125;</span></span></span><br><span class="line"><span class="tag"><span class="string">        &lt;/if&gt;</span></span></span><br><span class="line"><span class="tag"><span class="string">    &lt;/where&gt;</span></span></span><br><span class="line"><span class="tag"><span class="string">&lt;/select&gt;</span></span></span><br></pre></td></tr></table></figure></p>
+<p>只有有标签返回内容是才会插入where语句。而且如果返回的内容以<code>AND</code>或<code>OR</code>开始，它会自动去除。<br><strong>foreach语句</strong><br>foreach元素允许指定collection和声明item、index以便在元素体内使用。<br>允许指定open和close字符串，在iterations之间添加separator。创建in条件如下：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">"selectPostIn"</span> <span class="attr">resultType</span>=<span class="string">"domain.blog.Post"</span>&gt;</span></span><br><span class="line">    SELECT *</span><br><span class="line">    FROM POST P</span><br><span class="line">    WHERE ID in</span><br><span class="line">    <span class="tag">&lt;<span class="name">foreach</span> <span class="attr">item</span>=<span class="string">"item"</span> <span class="attr">index</span>=<span class="string">"index"</span> <span class="attr">collection</span>=<span class="string">"list"</span></span></span><br><span class="line"><span class="tag"><span class="attr">open</span>=<span class="string">"("</span> <span class="attr">separator</span>=<span class="string">","</span> <span class="attr">close</span>=<span class="string">")"</span>&gt;</span></span><br><span class="line">        #&#123;item&#125;</span><br><span class="line">    <span class="tag">&lt;/<span class="name">foreach</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/05/14/MyBatis/mybatis generator用法/" rel="next" title="mybatis generator用法">
+                <i class="fa fa-chevron-left"></i> mybatis generator用法
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/05/14/MyBatis/PageHelper/" rel="prev" title="PageHelper">
+                PageHelper <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="gitalk-container">
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Zong</p>
+              <div class="site-description motion-element" itemprop="description"></div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">166</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                      <a href="/categories/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">31</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/zkzong" title="GitHub &rarr; https://github.com/zkzong" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-简介"><span class="nav-number">1.</span> <span class="nav-text">1. 简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-环境配置"><span class="nav-number">2.</span> <span class="nav-text">2. 环境配置</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-CREATE操作"><span class="nav-number">3.</span> <span class="nav-text">3. CREATE操作</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4-READ操作"><span class="nav-number">4.</span> <span class="nav-text">4. READ操作</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#5-UPDATE操作"><span class="nav-number">5.</span> <span class="nav-text">5. UPDATE操作</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#6-DELETE操作"><span class="nav-number">6.</span> <span class="nav-text">6. DELETE操作</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#7-RESULT-MAPS"><span class="nav-number">7.</span> <span class="nav-text">7. RESULT MAPS</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#8-存储过程"><span class="nav-number">8.</span> <span class="nav-text">8. 存储过程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#9-动态SQL"><span class="nav-number">9.</span> <span class="nav-text">9. 动态SQL</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Zong</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.0"></script>
+
+  <script src="/js/motion.js?v=7.1.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.1.0"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.1.0"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.0"></script>
+<script src="/js/post-details.js?v=7.1.0"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.0"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+    
+
+<script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+
+
+<script src="//cdn.jsdelivr.net/npm/js-md5@0.7.3/src/md5.min.js"></script>
+
+<script>
+  var gitalk = new Gitalk({
+    clientID: '73066bdec38692537c94',
+    clientSecret: 'b1e5d41ba29fae3ae6eaae2b7920971f33730a9f',
+    repo: 'zkzong.github.io',
+    owner: 'zkzong',
+    admin: ['zkzong'],
+    id: md5(location.pathname),
+    
+      language: window.navigator.language || window.navigator.userLanguage,
+    
+    distractionFreeMode: 'true'
+  });
+  gitalk.render('gitalk-container');
+</script>
+
+  
+
+
+  
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+  
+  <script>
+    
+    function addCount(Counter) {
+      var $visitors = $('.leancloud_visitors');
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+
+      Counter('get', '/classes/Counter', { where: JSON.stringify({ url }) })
+        .done(function({ results }) {
+          if (results.length > 0) {
+            var counter = results[0];
+            
+            Counter('put', '/classes/Counter/' + counter.objectId, JSON.stringify({ time: { '__op': 'Increment', 'amount': 1 } }))
+            
+              .done(function() {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.time + 1);
+              })
+            
+              .fail(function ({ responseJSON }) {
+                console.log('Failed to save Visitor num, with error message: ' + responseJSON.error);
+              })
+          } else {
+            
+              Counter('post', '/classes/Counter', JSON.stringify({ title: title, url: url, time: 1 }))
+                .done(function() {
+                  var $element = $(document.getElementById(url));
+                  $element.find('.leancloud-visitors-count').text(1);
+                })
+                .fail(function() {
+                  console.log('Failed to create');
+                });
+            
+          }
+        })
+        .fail(function ({ responseJSON }) {
+          console.log('LeanCloud Counter Error: ' + responseJSON.code + ' ' + responseJSON.error);
+        });
+    }
+    
+
+    $(function() {
+      $.get('https://app-router.leancloud.cn/2/route?appId=' + 'UWPKKSPkFHL2NjJhMNAROaVk-gzGzoHsz')
+        .done(function({ api_server }) {
+          var Counter = function(method, url, data) {
+            return $.ajax({
+              method: method,
+              url: 'https://' + api_server + '/1.1' + url,
+              headers: {
+                'X-LC-Id': 'UWPKKSPkFHL2NjJhMNAROaVk-gzGzoHsz',
+                'X-LC-Key': 'mE5iLOQA7IQtQusstI82ahjV',
+                'Content-Type': 'application/json',
+              },
+              data: data
+            });
+          };
+          
+            addCount(Counter);
+          
+        });
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

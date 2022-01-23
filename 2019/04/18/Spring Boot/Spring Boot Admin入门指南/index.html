@@ -1,0 +1,1417 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="Spring Boot ActuatorActuator是Spring Boot的模块，它在应用中添加了REST/JMS端点，方便监控和管理应用。端点提供了健康检查、指标监控、访问日志、线程转储、堆转储和环境信息等等。 Spring Boot AdminActuator功能强大，便于其他应用使用端点（只需要简单的REST调用）。但是开发人员使用时就没那么方便了。对于开发人员，有良好的交互界面会更方">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring Boot Admin入门指南">
+<meta property="og:url" content="http://yoursite.com/2019/04/18/Spring Boot/Spring Boot Admin入门指南/index.html">
+<meta property="og:site_name" content="Zong&#39;s Blog">
+<meta property="og:description" content="Spring Boot ActuatorActuator是Spring Boot的模块，它在应用中添加了REST/JMS端点，方便监控和管理应用。端点提供了健康检查、指标监控、访问日志、线程转储、堆转储和环境信息等等。 Spring Boot AdminActuator功能强大，便于其他应用使用端点（只需要简单的REST调用）。但是开发人员使用时就没那么方便了。对于开发人员，有良好的交互界面会更方">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/292448-8fd9e6ea8a1709a6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/292448-2d3bb1c6a118fe1a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/292448-e39086793a9d0a69.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/292448-64cf77cd77e14cf5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/292448-8d42699dcfe8a688.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/292448-ec1562c77afcfb9e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2022-01-06T13:21:26.305Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Spring Boot Admin入门指南">
+<meta name="twitter:description" content="Spring Boot ActuatorActuator是Spring Boot的模块，它在应用中添加了REST/JMS端点，方便监控和管理应用。端点提供了健康检查、指标监控、访问日志、线程转储、堆转储和环境信息等等。 Spring Boot AdminActuator功能强大，便于其他应用使用端点（只需要简单的REST调用）。但是开发人员使用时就没那么方便了。对于开发人员，有良好的交互界面会更方">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/292448-8fd9e6ea8a1709a6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://yoursite.com/2019/04/18/Spring Boot/Spring Boot Admin入门指南/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Spring Boot Admin入门指南 | Zong's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Zong's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">技术博客</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/18/Spring Boot/Spring Boot Admin入门指南/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Zong">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Zong's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Spring Boot Admin入门指南
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-04-18 00:00:00" itemprop="dateCreated datePublished" datetime="2019-04-18T00:00:00+08:00">2019-04-18</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2022-01-06 21:21:26" itemprop="dateModified" datetime="2022-01-06T21:21:26+08:00">2022-01-06</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Spring-Boot/" itemprop="url" rel="index"><span itemprop="name">Spring Boot</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+            <span id="/2019/04/18/Spring Boot/Spring Boot Admin入门指南/" class="leancloud_visitors" data-flag-title="Spring Boot Admin入门指南">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读次数：</span>
+              
+                <span class="leancloud-visitors-count"></span>
+            </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="Spring-Boot-Actuator"><a href="#Spring-Boot-Actuator" class="headerlink" title="Spring Boot Actuator"></a>Spring Boot Actuator</h2><p>Actuator是Spring Boot的模块，它在应用中添加了REST/JMS端点，方便监控和管理应用。端点提供了健康检查、指标监控、访问日志、线程转储、堆转储和环境信息等等。</p>
+<h2 id="Spring-Boot-Admin"><a href="#Spring-Boot-Admin" class="headerlink" title="Spring Boot Admin"></a>Spring Boot Admin</h2><p>Actuator功能强大，便于其他应用使用端点（只需要简单的REST调用）。但是开发人员使用时就没那么方便了。对于开发人员，有良好的交互界面会更方便浏览监控数据和管理应用。这正是Spring Boot Admin做的工作。它为actuator端点提供了良好的交互界面，并提供了额外的特性。</p>
+<p>Spring Boot Admin不是Spring团队提供的模块，它是由<a href="https://blog.codecentric.de/en/" target="_blank" rel="noopener">Codecentric</a>公司创建的，代码在<a href="https://github.com/codecentric/spring-boot-admin" target="_blank" rel="noopener">Github</a>上公开。</p>
+<h2 id="Client-And-Server"><a href="#Client-And-Server" class="headerlink" title="Client And Server"></a>Client And Server</h2><p>不像Actuator，Spring Boot Admin由两部分组成：Client和Server。</p>
+<p>Server部分包括Admin用户界面并独立运行于被监控应用。Client部分是包含在被监控应用中，并注册到Admin Server。</p>
+<p>这样，即使应用挂掉了或者不能正常运行，监控的Server依然正常运行。假如你有多个应用（比如Spring Boot微服务应用），每个应用运行多个实例。对于传统的Actuator监控，很难单独访问每个应用，因为你要跟踪有多少实例及它们在哪运行。</p>
+<p>对于Spring Boot Admin，被监控应用的每个实例（Client）在启动时注册到Server，每个实例在Admin Server就有一个单点，就可以检查它们的状态了。<br><img src="https://upload-images.jianshu.io/upload_images/292448-8fd9e6ea8a1709a6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Spring Boot Admin"></p>
+<h2 id="Server配置"><a href="#Server配置" class="headerlink" title="Server配置"></a>Server配置</h2><p>首先对Spring Boot Admin Server进行配置。</p>
+<p>创建一个Spring Boot工程，可以使用<a href="https://start.spring.io/" target="_blank" rel="noopener">Spring Initializr</a>创建。保证包含<code>web</code>模块。<br>创建工程后，第一件事就是添加Spring Boot Admin Server依赖：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;de.codecentric&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;spring-boot-admin-starter-server&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;2.1.0&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p>注意：尽管Spring Boot Admin不是由Pivotal官方开发的，但是你会发现使用Spring Initializr创建工程时可以选择Spring Boot Admin的Client和Server模块。</p>
+</blockquote>
+<p>接着需要在启动类中加入注解<code>@EnableAdminServer</code>来开启Admin Server。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="meta">@EnableAdminServerpublic</span> <span class="class"><span class="keyword">class</span> <span class="title">SpringBootAdminServerApplication</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        SpringApplication.run(SpringBootAdminServerApplication.class, args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>现在运行程序并在浏览器打开<code>http://localhost:8080/</code>，可以看到如下界面：<br><img src="https://upload-images.jianshu.io/upload_images/292448-2d3bb1c6a118fe1a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Admin Server"></p>
+<p>Server运行正常，但是没有Client注册。</p>
+<h2 id="Client配置"><a href="#Client配置" class="headerlink" title="Client配置"></a>Client配置</h2><p>和Server一样，第一步是向新建Client工程添加依赖：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;de.codecentric&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;spring-boot-admin-starter-client&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;2.1.0&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure></p>
+<p>然后指定运行的Admin Server的url，即在<code>application.properties</code>中添加：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">spring.boot.admin.client.url=http://localhost:8080</span><br></pre></td></tr></table></figure></p>
+<h3 id="添加Actuator"><a href="#添加Actuator" class="headerlink" title="添加Actuator"></a>添加Actuator</h3><p>现在可以同时运行Client和Server应用。只要保证没有端口冲突，因为两个应用默认端口都是8080。测试情况下，可以在<code>application.properties</code>中设置<code>server.port=0</code>，这样Client会使用一个随机端口启动。这样就可以测试使用不同的端口启动多个实例。</p>
+<p>打开Admin Server界面就可以看到Client应用了。点击应用名称显示应用详情页。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/292448-e39086793a9d0a69.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="应用详情页"></p>
+<p>如果你看到上面最少信息的界面，意味着你的项目中没有添加Actuator。记住，Spring Boot Admin使用Actuator端点监控应用运行状况。幸运的是，只需要在项目中添加依赖，自动配置会解决其他问题。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;spring-boot-starter-actuator&lt;/artifactId&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+<p>但是，大部分的端点默认是不对外暴露的，所以需要在<code>application.properties</code>添加配置使它们暴露：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">management.endpoints.web.exposure.include=*</span><br></pre></td></tr></table></figure></p>
+<p>暴露Actuator端点后就可以在Admin Server上看到更多的信息了。<br><img src="https://upload-images.jianshu.io/upload_images/292448-64cf77cd77e14cf5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>更多细节可以查看<a href="https://www.vojtechruzicka.com/spring-boot-actuator/" target="_blank" rel="noopener">这篇文章</a>。</p>
+<h2 id="安全"><a href="#安全" class="headerlink" title="安全"></a>安全</h2><p>现在所有服务都能正常运行，但是我们要保证Actuator端点和Admin管理界面的安全性。</p>
+<h3 id="Client安全"><a href="#Client安全" class="headerlink" title="Client安全"></a>Client安全</h3><p>如果你已经使用了Spring Security，上面的内容不会起作用，因为Actuator端点默认是被保护的，Admin Server不能访问它们。如果没有使用Spring Security，首先需要添加依赖：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;spring-boot-starter-security&lt;/artifactId&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure></p>
+<p>为了方便测试，可以配置<code>management.security.enabled=false</code>临时禁用Actuator端点的保护。如果使用基本身份认证，需要在配置文件中提供用户名和密码。Admin Server使用这些凭证来认证Client的Actuator端点。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">spring.boot.admin.client.instance.metadata.user.name=client</span><br><span class="line">spring.boot.admin.client.instance.metadata.user.password=client</span><br></pre></td></tr></table></figure></p>
+<p>默认情况下，如果没有配置Spring Boot使用默认用户<code>user</code>并在应用启动时自动生成密码。启动时你可以在控制台找到密码。如果你要在应用中明确指定用户名和密码，可以在配置文件中配置：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">spring.security.user.name=client</span><br><span class="line">spring.security.user.password=client</span><br></pre></td></tr></table></figure></p>
+<h3 id="Server安全"><a href="#Server安全" class="headerlink" title="Server安全"></a>Server安全</h3><p>和Client一样，在Admin Server添加依赖：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;spring-boot-starter-security&lt;/artifactId&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure></p>
+<p>在<code>application.properties</code>配置登录Admin Server的用户名和密码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">spring.security.user.name=server</span><br><span class="line">spring.security.user.password=server</span><br></pre></td></tr></table></figure></p>
+<p>然后在<strong>Client</strong>端也要添加这些凭证，否则不能注册到server。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">spring.boot.admin.client.username=server</span><br><span class="line">spring.boot.admin.client.password=server</span><br></pre></td></tr></table></figure></p>
+<p>回到<strong>Server</strong>模块，最后一件事是添加Spring Security配置来保证Admin管理界面的安全性。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SecurityConfig</span> <span class="keyword">extends</span> <span class="title">WebSecurityConfigurerAdapter</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">configure</span><span class="params">(HttpSecurity http)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        SavedRequestAwareAuthenticationSuccessHandler successHandler </span><br><span class="line">            = <span class="keyword">new</span> SavedRequestAwareAuthenticationSuccessHandler();</span><br><span class="line">        successHandler.setTargetUrlParameter(<span class="string">"redirectTo"</span>);</span><br><span class="line">        successHandler.setDefaultTargetUrl(<span class="string">"/"</span>);</span><br><span class="line"></span><br><span class="line">        http.authorizeRequests()</span><br><span class="line">            .antMatchers(<span class="string">"/assets/**"</span>).permitAll()</span><br><span class="line">            .antMatchers(<span class="string">"/login"</span>).permitAll()</span><br><span class="line">            .anyRequest().authenticated().and()</span><br><span class="line">            .formLogin().loginPage(<span class="string">"/login"</span>)</span><br><span class="line">            .successHandler(successHandler).and()</span><br><span class="line">            .logout().logoutUrl(<span class="string">"/logout"</span>).and()</span><br><span class="line">            .httpBasic().and()</span><br><span class="line">            .csrf()</span><br><span class="line">            .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())</span><br><span class="line">            .ignoringAntMatchers(</span><br><span class="line">                <span class="string">"/instances"</span>,</span><br><span class="line">                <span class="string">"/actuator/**"</span></span><br><span class="line">             );</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这段代码的作用是：限制只有通过HTTP基本认证和登录用户可以使用Admin管理界面。登录界面和静态资源（javascript, HTML, CSS）是公开的，否则无法登录。它是基于cookie的CSRF保护。你可以看到在CSRF保护中有些路径被忽略了，因为Admin Server<a href="http://codecentric.github.io/spring-boot-admin/current/#_csrf_on_actuator_endpoints" target="_blank" rel="noopener">缺少适当的支持</a>。</p>
+<p>重启Server，可以看到更加美观的登录界面。<br><img src="https://upload-images.jianshu.io/upload_images/292448-8d42699dcfe8a688.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Spring Boot Admin Server登录界面"></p>
+<h2 id="云服务发现"><a href="#云服务发现" class="headerlink" title="云服务发现"></a>云服务发现</h2><p>Spring Boot Admin client并不是唯一可以注册应用到Server的方式。Admin Server也支持Spring Cloud Service Discovery。你可以通过<a href="http://codecentric.github.io/spring-boot-admin/current/#spring-cloud-discovery-support" target="_blank" rel="noopener">官方文档</a>或<a href="https://zoltanaltfatter.com/2018/05/15/spring-cloud-discovery-with-spring-boot-admin/" target="_blank" rel="noopener">Spring Cloud Discovery with Spring Boot Admin</a>查看更多信息。</p>
+<h2 id="通知"><a href="#通知" class="headerlink" title="通知"></a>通知</h2><p>服务监控后，如果服务出错当然希望能够得到通知。Spring Boot Admin提供了多种通知选项。</p>
+<p>第一次访问Admin Server页面时，它会提示要求显示推送通知的权限。一旦出现问题，你会收到提示信息。<br><img src="https://upload-images.jianshu.io/upload_images/292448-ec1562c77afcfb9e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="通知"></p>
+<p>其他通知需要简单配置。一般只需要在<code>application.properties</code>配置就行。目前支持的服务有：</p>
+<ul>
+<li>Mail</li>
+<li><a href="https://codecentric.github.io/spring-boot-admin/current/#slack-notifications" target="_blank" rel="noopener">Slack</a></li>
+<li><a href="https://codecentric.github.io/spring-boot-admin/current/#hipchat-notifications" target="_blank" rel="noopener">HipChat</a></li>
+<li><a href="https://codecentric.github.io/spring-boot-admin/current/#pagerduty-notifications" target="_blank" rel="noopener">PagerDuty</a></li>
+<li><a href="https://codecentric.github.io/spring-boot-admin/current/#opsgenie-notifications" target="_blank" rel="noopener">OpsGenie</a></li>
+<li><a href="https://codecentric.github.io/spring-boot-admin/current/#letschat-notifications" target="_blank" rel="noopener">Let’s Chat</a></li>
+<li><a href="https://codecentric.github.io/spring-boot-admin/current/#ms-teams-notifications" target="_blank" rel="noopener">Telegram</a></li>
+<li><a href="https://codecentric.github.io/spring-boot-admin/current/#telegram-notifications" target="_blank" rel="noopener">Microsoft Team</a></li>
+</ul>
+<h2 id="配置Email通知"><a href="#配置Email通知" class="headerlink" title="配置Email通知"></a>配置Email通知</h2><p>如果要使用Email通知，需要在<code>Server</code>端添加Spring email依赖：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-mail<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>然后需要指定SMTP服务器，它用来发送email通知和证书。更新Admin Server的<code>application.properties</code>。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">spring.mail.host=smtp.foo.com</span><br><span class="line">spring.mail.username=smtp-server-user</span><br><span class="line">spring.mail.password=smtp-server-password</span><br></pre></td></tr></table></figure></p>
+<p>然后指定发送者和接收者。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># 发送邮箱</span><br><span class="line">spring.boot.admin.notify.mail.from=&quot;Spring Boot Admin &lt;noreply@foo.com&gt;&quot;</span><br><span class="line"># 接收者邮箱列表，以逗号分隔</span><br><span class="line">spring.boot.admin.notify.mail.to=alice@foo.com,bob@bar.com</span><br><span class="line"># 抄送者邮箱列表，以逗号分隔</span><br><span class="line">spring.boot.admin.notify.mail.cc=joe@foo.com</span><br></pre></td></tr></table></figure></p>
+<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>Spring Boot Admin为Actuator端点提供了漂亮的管理界面，而且它可以集中监控多个应用，这在云端和微服务中是非常有用的。但是要确保在使用过程中保证Server和Client的安全。<br>更多信息可以查看<a href="http://codecentric.github.io/spring-boot-admin/current/" target="_blank" rel="noopener">官方文档</a>。</p>
+<p><strong>参考：</strong><a href="https://www.vojtechruzicka.com/spring-boot-admin/" target="_blank" rel="noopener">https://www.vojtechruzicka.com/spring-boot-admin/</a></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/18/Spring Boot/Spring Boot CommandLineRunner和ApplicationRunner/" rel="next" title="Spring Boot CommandLineRunner和ApplicationRunner">
+                <i class="fa fa-chevron-left"></i> Spring Boot CommandLineRunner和ApplicationRunner
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/04/18/Jenkins/Jenkins/" rel="prev" title="Jenkins">
+                Jenkins <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="gitalk-container">
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Zong</p>
+              <div class="site-description motion-element" itemprop="description"></div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">166</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                      <a href="/categories/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">31</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/zkzong" title="GitHub &rarr; https://github.com/zkzong" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Spring-Boot-Actuator"><span class="nav-number">1.</span> <span class="nav-text">Spring Boot Actuator</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Spring-Boot-Admin"><span class="nav-number">2.</span> <span class="nav-text">Spring Boot Admin</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Client-And-Server"><span class="nav-number">3.</span> <span class="nav-text">Client And Server</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Server配置"><span class="nav-number">4.</span> <span class="nav-text">Server配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Client配置"><span class="nav-number">5.</span> <span class="nav-text">Client配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#添加Actuator"><span class="nav-number">5.1.</span> <span class="nav-text">添加Actuator</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安全"><span class="nav-number">6.</span> <span class="nav-text">安全</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Client安全"><span class="nav-number">6.1.</span> <span class="nav-text">Client安全</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Server安全"><span class="nav-number">6.2.</span> <span class="nav-text">Server安全</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#云服务发现"><span class="nav-number">7.</span> <span class="nav-text">云服务发现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#通知"><span class="nav-number">8.</span> <span class="nav-text">通知</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#配置Email通知"><span class="nav-number">9.</span> <span class="nav-text">配置Email通知</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结论"><span class="nav-number">10.</span> <span class="nav-text">结论</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Zong</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.0"></script>
+
+  <script src="/js/motion.js?v=7.1.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.1.0"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.1.0"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.0"></script>
+<script src="/js/post-details.js?v=7.1.0"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.0"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+    
+
+<script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+
+
+<script src="//cdn.jsdelivr.net/npm/js-md5@0.7.3/src/md5.min.js"></script>
+
+<script>
+  var gitalk = new Gitalk({
+    clientID: '73066bdec38692537c94',
+    clientSecret: 'b1e5d41ba29fae3ae6eaae2b7920971f33730a9f',
+    repo: 'zkzong.github.io',
+    owner: 'zkzong',
+    admin: ['zkzong'],
+    id: md5(location.pathname),
+    
+      language: window.navigator.language || window.navigator.userLanguage,
+    
+    distractionFreeMode: 'true'
+  });
+  gitalk.render('gitalk-container');
+</script>
+
+  
+
+
+  
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+  
+  <script>
+    
+    function addCount(Counter) {
+      var $visitors = $('.leancloud_visitors');
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+
+      Counter('get', '/classes/Counter', { where: JSON.stringify({ url }) })
+        .done(function({ results }) {
+          if (results.length > 0) {
+            var counter = results[0];
+            
+            Counter('put', '/classes/Counter/' + counter.objectId, JSON.stringify({ time: { '__op': 'Increment', 'amount': 1 } }))
+            
+              .done(function() {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.time + 1);
+              })
+            
+              .fail(function ({ responseJSON }) {
+                console.log('Failed to save Visitor num, with error message: ' + responseJSON.error);
+              })
+          } else {
+            
+              Counter('post', '/classes/Counter', JSON.stringify({ title: title, url: url, time: 1 }))
+                .done(function() {
+                  var $element = $(document.getElementById(url));
+                  $element.find('.leancloud-visitors-count').text(1);
+                })
+                .fail(function() {
+                  console.log('Failed to create');
+                });
+            
+          }
+        })
+        .fail(function ({ responseJSON }) {
+          console.log('LeanCloud Counter Error: ' + responseJSON.code + ' ' + responseJSON.error);
+        });
+    }
+    
+
+    $(function() {
+      $.get('https://app-router.leancloud.cn/2/route?appId=' + 'UWPKKSPkFHL2NjJhMNAROaVk-gzGzoHsz')
+        .done(function({ api_server }) {
+          var Counter = function(method, url, data) {
+            return $.ajax({
+              method: method,
+              url: 'https://' + api_server + '/1.1' + url,
+              headers: {
+                'X-LC-Id': 'UWPKKSPkFHL2NjJhMNAROaVk-gzGzoHsz',
+                'X-LC-Key': 'mE5iLOQA7IQtQusstI82ahjV',
+                'Content-Type': 'application/json',
+              },
+              data: data
+            });
+          };
+          
+            addCount(Counter);
+          
+        });
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

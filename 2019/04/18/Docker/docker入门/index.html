@@ -1,0 +1,1421 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="1. Docker for Linux本篇文章适用于Linux发行版，如Ubuntu。 for Windows and Mac OS X 通过这篇文章你将学会：  安装Docker 在容器中运行镜像 在Docker Hub中浏览镜像 创建自己的镜像并在容器中运行 创建Docker Hub帐号和镜像仓库 push镜像到Docker Hub  2. 安装Docker2.1 使用sudo权限登录Ubun">
+<meta property="og:type" content="article">
+<meta property="og:title" content="docker入门">
+<meta property="og:url" content="http://yoursite.com/2019/04/18/Docker/docker入门/index.html">
+<meta property="og:site_name" content="Zong&#39;s Blog">
+<meta property="og:description" content="1. Docker for Linux本篇文章适用于Linux发行版，如Ubuntu。 for Windows and Mac OS X 通过这篇文章你将学会：  安装Docker 在容器中运行镜像 在Docker Hub中浏览镜像 创建自己的镜像并在容器中运行 创建Docker Hub帐号和镜像仓库 push镜像到Docker Hub  2. 安装Docker2.1 使用sudo权限登录Ubun">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://docs.docker.com/tutimg/container_explainer.png">
+<meta property="og:image" content="http://docs.docker.com/tutimg/browse_and_search.png">
+<meta property="og:image" content="http://docs.docker.com/tutimg/image_found.png">
+<meta property="og:image" content="http://docs.docker.com/tutimg/whale_repo.png">
+<meta property="og:image" content="http://docs.docker.com/tutimg/add_repository.png">
+<meta property="og:image" content="http://docs.docker.com/tutimg/tagger.png">
+<meta property="og:updated_time" content="2022-01-06T13:21:26.284Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="docker入门">
+<meta name="twitter:description" content="1. Docker for Linux本篇文章适用于Linux发行版，如Ubuntu。 for Windows and Mac OS X 通过这篇文章你将学会：  安装Docker 在容器中运行镜像 在Docker Hub中浏览镜像 创建自己的镜像并在容器中运行 创建Docker Hub帐号和镜像仓库 push镜像到Docker Hub  2. 安装Docker2.1 使用sudo权限登录Ubun">
+<meta name="twitter:image" content="http://docs.docker.com/tutimg/container_explainer.png">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://yoursite.com/2019/04/18/Docker/docker入门/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>docker入门 | Zong's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Zong's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">技术博客</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/18/Docker/docker入门/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Zong">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Zong's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">docker入门
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-04-18 00:00:00" itemprop="dateCreated datePublished" datetime="2019-04-18T00:00:00+08:00">2019-04-18</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2022-01-06 21:21:26" itemprop="dateModified" datetime="2022-01-06T21:21:26+08:00">2022-01-06</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Docker/" itemprop="url" rel="index"><span itemprop="name">Docker</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+            <span id="/2019/04/18/Docker/docker入门/" class="leancloud_visitors" data-flag-title="docker入门">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读次数：</span>
+              
+                <span class="leancloud-visitors-count"></span>
+            </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="1-Docker-for-Linux"><a href="#1-Docker-for-Linux" class="headerlink" title="1. Docker for Linux"></a>1. Docker for Linux</h2><p>本篇文章适用于Linux发行版，如Ubuntu。</p>
+<p>for <a href="http://docs.docker.com/windows/started/" target="_blank" rel="noopener">Windows</a> and <a href="http://docs.docker.com/mac/started/" target="_blank" rel="noopener">Mac OS X</a></p>
+<p>通过这篇文章你将学会：</p>
+<ul>
+<li>安装Docker</li>
+<li>在容器中运行镜像</li>
+<li>在Docker Hub中浏览镜像</li>
+<li>创建自己的镜像并在容器中运行</li>
+<li>创建Docker Hub帐号和镜像仓库</li>
+<li>push镜像到Docker Hub</li>
+</ul>
+<h2 id="2-安装Docker"><a href="#2-安装Docker" class="headerlink" title="2. 安装Docker"></a>2. 安装Docker</h2><h3 id="2-1-使用sudo权限登录Ubuntu"><a href="#2-1-使用sudo权限登录Ubuntu" class="headerlink" title="2.1 使用sudo权限登录Ubuntu"></a>2.1 <strong>使用<code>sudo</code>权限登录Ubuntu</strong></h3><h3 id="2-2-检查wget是否安装"><a href="#2-2-检查wget是否安装" class="headerlink" title="2.2 检查wget是否安装"></a>2.2 检查<code>wget</code>是否安装</h3><pre><code>which wget
+</code></pre><p>如果没有安装，需要安装</p>
+<pre><code>sudo apt-get update
+sudo apt-get install wget
+</code></pre><h3 id="2-3-获取最新的Docker包"><a href="#2-3-获取最新的Docker包" class="headerlink" title="2.3 获取最新的Docker包"></a>2.3 获取最新的Docker包</h3><pre><code>$ wget -qO- https://get.docker.com/ | sh
+</code></pre><h3 id="2-4-检查docker是否正确安装"><a href="#2-4-检查docker是否正确安装" class="headerlink" title="2.4 检查docker是否正确安装"></a>2.4 检查<code>docker</code>是否正确安装</h3><pre><code>docker run hello-world
+</code></pre><h2 id="3-理解镜像和容器"><a href="#3-理解镜像和容器" class="headerlink" title="3. 理解镜像和容器"></a>3. 理解镜像和容器</h2><p>上一节运行<code>docker run hello-world</code>命令。使用这个命令完成使用Docker的主要任务。命令分三部分：</p>
+<p><img src="http://docs.docker.com/tutimg/container_explainer.png" alt="http://docs.docker.com/tutimg/container_explainer.png"></p>
+<h2 id="4-查找并运行whalesay镜像"><a href="#4-查找并运行whalesay镜像" class="headerlink" title="4. 查找并运行whalesay镜像"></a>4. 查找并运行whalesay镜像</h2><p>可以从Docker Hub上查找镜像。</p>
+<h3 id="4-1-定位whalesay镜像"><a href="#4-1-定位whalesay镜像" class="headerlink" title="4.1 定位whalesay镜像"></a>4.1 定位whalesay镜像</h3><ol>
+<li>打开浏览器进入DockerHub<br><img src="http://docs.docker.com/tutimg/browse_and_search.png" alt="http://docs.docker.com/tutimg/browse_and_search.png"></li>
+<li>单击<code>Browse &amp; Search</code></li>
+<li>在搜索框中输入<code>whalesay</code><br><img src="http://docs.docker.com/tutimg/image_found.png" alt="http://docs.docker.com/tutimg/image_found.png"></li>
+<li>单击docker/whalesay镜像<br><img src="http://docs.docker.com/tutimg/whale_repo.png" alt="http://docs.docker.com/tutimg/whale_repo.png"><br>每个镜像仓库包含镜像信息。信息中包含如镜像是哪种软件和怎么使用等信息。</li>
+</ol>
+<h3 id="4-2-在容器中运行whalesay"><a href="#4-2-在容器中运行whalesay" class="headerlink" title="4.2 在容器中运行whalesay"></a>4.2 在容器中运行whalesay</h3><ol>
+<li>光标定位在终端的<code>$</code>之后</li>
+<li>输入<code>docker run docker/whalesay cowsay boo</code></li>
+<li>输入<code>docker images</code>查看本地所有镜像</li>
+</ol>
+<p>当在容器中运行镜像时，Docker会下载镜像到电脑中。本地的镜像可以节省时间。只有Hub中的镜像源改变后Docker才会下载镜像。当然也可以删除镜像。</p>
+<h2 id="5-构建自己的镜像"><a href="#5-构建自己的镜像" class="headerlink" title="5. 构建自己的镜像"></a>5. 构建自己的镜像</h2><h3 id="5-1-创建Dockerfile文件"><a href="#5-1-创建Dockerfile文件" class="headerlink" title="5.1 创建Dockerfile文件"></a>5.1 创建Dockerfile文件</h3><ol>
+<li>打开终端</li>
+<li>使用<code>mkdir mydockerbuild</code>创建目录</li>
+<li>进入mydockerbuild目录创建Dockerfile文件</li>
+<li>在Dockerfile文件中输入以下内容<br> <code>FROM docker/whalesay:latest</code><br> <code>RUN apt-get -y update &amp;&amp; apt-get install -y fortunes</code><br> <code>CMD /usr/games/fortune -a | cowsay</code></li>
+<li>保存Dockerfile文件</li>
+<li>使用<code>docker build -t docker-whale .</code>构建镜像</li>
+</ol>
+<h2 id="6-创建Docker-Hub账号和资源"><a href="#6-创建Docker-Hub账号和资源" class="headerlink" title="6. 创建Docker Hub账号和资源"></a>6. 创建Docker Hub账号和资源</h2><p>和GitHub账号的注册基本一致，在此不详细介绍。<br><img src="http://docs.docker.com/tutimg/add_repository.png" alt="http://docs.docker.com/tutimg/add_repository.png"></p>
+<h2 id="7-Tag、push、pull镜像"><a href="#7-Tag、push、pull镜像" class="headerlink" title="7. Tag、push、pull镜像"></a>7. Tag、push、pull镜像</h2><p>本节将介绍如何tag和push自己的镜像到新建的资源库，并测试和pull镜像。</p>
+<h3 id="7-1-tag、push镜像"><a href="#7-1-tag、push镜像" class="headerlink" title="7.1 tag、push镜像"></a>7.1 tag、push镜像</h3><ol>
+<li>使用<code>docker images</code>列出本地镜像</li>
+<li>找到<code>docker-whale</code>镜像的<code>IMAGE ID</code></li>
+<li>使用<code>IMAGE ID</code>和<code>docker tag</code>命令tag<code>docker-whale</code>镜像<br><img src="http://docs.docker.com/tutimg/tagger.png" alt="http://docs.docker.com/tutimg/tagger.png"><br><code>$ docker tag 7d9495d03763 maryatdocker/docker-whale:latest</code></li>
+<li>使用<code>docker push</code>命令把镜像push到资源库<br><code>docker push maryatdocker/docker-whale</code></li>
+</ol>
+<h3 id="7-2-pull镜像"><a href="#7-2-pull镜像" class="headerlink" title="7.2 pull镜像"></a>7.2 pull镜像</h3><ol>
+<li>使用<code>docker rmi</code>删除<code>maryatdocker/docker-whale</code>和<code>docker-whale</code>镜像<br>可以使用ID或name删除<br><code>$ docker rmi -f 7d9495d03763</code><br><code>$ docker rmi -f docker-whale</code></li>
+<li>使用<code>docker pull</code>命令从资源库中pull镜像<br><code>docker pull yourusername/docker-whale</code></li>
+<li>运行镜像<br><code>docker run maryatdocker/docker-whale</code></li>
+</ol>
+<h3 id="常见问题："><a href="#常见问题：" class="headerlink" title="常见问题："></a>常见问题：</h3><ol>
+<li>命令没有使用<code>sudo</code></li>
+<li>错误<br><code>FATA[0000] Post http:///var/run/docker.sock/v1.18/containers/create: dial unix /var/run/docker.sock: no such file or directory. Are you trying to connect to a TLS-enabled daemon without TLS?</code><br><em>解决方法：</em><code>/etc/init.d/docker restart</code></li>
+</ol>
+<p>参考文章：<a href="http://docs.docker.com/linux/started/" target="_blank" rel="noopener">http://docs.docker.com/linux/started/</a></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/18/Docker/Docker入门实战/" rel="next" title="Docker入门实战">
+                <i class="fa fa-chevron-left"></i> Docker入门实战
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/04/18/Docker/Docker-Compose的安装与使用/" rel="prev" title="Docker-Compose的安装与使用">
+                Docker-Compose的安装与使用 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="gitalk-container">
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Zong</p>
+              <div class="site-description motion-element" itemprop="description"></div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">166</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                      <a href="/categories/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">31</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/zkzong" title="GitHub &rarr; https://github.com/zkzong" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Docker-for-Linux"><span class="nav-number">1.</span> <span class="nav-text">1. Docker for Linux</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-安装Docker"><span class="nav-number">2.</span> <span class="nav-text">2. 安装Docker</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-使用sudo权限登录Ubuntu"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 使用sudo权限登录Ubuntu</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-检查wget是否安装"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 检查wget是否安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-获取最新的Docker包"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 获取最新的Docker包</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-检查docker是否正确安装"><span class="nav-number">2.4.</span> <span class="nav-text">2.4 检查docker是否正确安装</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-理解镜像和容器"><span class="nav-number">3.</span> <span class="nav-text">3. 理解镜像和容器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-查找并运行whalesay镜像"><span class="nav-number">4.</span> <span class="nav-text">4. 查找并运行whalesay镜像</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-定位whalesay镜像"><span class="nav-number">4.1.</span> <span class="nav-text">4.1 定位whalesay镜像</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-在容器中运行whalesay"><span class="nav-number">4.2.</span> <span class="nav-text">4.2 在容器中运行whalesay</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-构建自己的镜像"><span class="nav-number">5.</span> <span class="nav-text">5. 构建自己的镜像</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-创建Dockerfile文件"><span class="nav-number">5.1.</span> <span class="nav-text">5.1 创建Dockerfile文件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-创建Docker-Hub账号和资源"><span class="nav-number">6.</span> <span class="nav-text">6. 创建Docker Hub账号和资源</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-Tag、push、pull镜像"><span class="nav-number">7.</span> <span class="nav-text">7. Tag、push、pull镜像</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#7-1-tag、push镜像"><span class="nav-number">7.1.</span> <span class="nav-text">7.1 tag、push镜像</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-2-pull镜像"><span class="nav-number">7.2.</span> <span class="nav-text">7.2 pull镜像</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#常见问题："><span class="nav-number">7.3.</span> <span class="nav-text">常见问题：</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Zong</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.0"></script>
+
+  <script src="/js/motion.js?v=7.1.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.1.0"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.1.0"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.0"></script>
+<script src="/js/post-details.js?v=7.1.0"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.0"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+    
+
+<script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+
+
+<script src="//cdn.jsdelivr.net/npm/js-md5@0.7.3/src/md5.min.js"></script>
+
+<script>
+  var gitalk = new Gitalk({
+    clientID: '73066bdec38692537c94',
+    clientSecret: 'b1e5d41ba29fae3ae6eaae2b7920971f33730a9f',
+    repo: 'zkzong.github.io',
+    owner: 'zkzong',
+    admin: ['zkzong'],
+    id: md5(location.pathname),
+    
+      language: window.navigator.language || window.navigator.userLanguage,
+    
+    distractionFreeMode: 'true'
+  });
+  gitalk.render('gitalk-container');
+</script>
+
+  
+
+
+  
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+  
+  <script>
+    
+    function addCount(Counter) {
+      var $visitors = $('.leancloud_visitors');
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+
+      Counter('get', '/classes/Counter', { where: JSON.stringify({ url }) })
+        .done(function({ results }) {
+          if (results.length > 0) {
+            var counter = results[0];
+            
+            Counter('put', '/classes/Counter/' + counter.objectId, JSON.stringify({ time: { '__op': 'Increment', 'amount': 1 } }))
+            
+              .done(function() {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.time + 1);
+              })
+            
+              .fail(function ({ responseJSON }) {
+                console.log('Failed to save Visitor num, with error message: ' + responseJSON.error);
+              })
+          } else {
+            
+              Counter('post', '/classes/Counter', JSON.stringify({ title: title, url: url, time: 1 }))
+                .done(function() {
+                  var $element = $(document.getElementById(url));
+                  $element.find('.leancloud-visitors-count').text(1);
+                })
+                .fail(function() {
+                  console.log('Failed to create');
+                });
+            
+          }
+        })
+        .fail(function ({ responseJSON }) {
+          console.log('LeanCloud Counter Error: ' + responseJSON.code + ' ' + responseJSON.error);
+        });
+    }
+    
+
+    $(function() {
+      $.get('https://app-router.leancloud.cn/2/route?appId=' + 'UWPKKSPkFHL2NjJhMNAROaVk-gzGzoHsz')
+        .done(function({ api_server }) {
+          var Counter = function(method, url, data) {
+            return $.ajax({
+              method: method,
+              url: 'https://' + api_server + '/1.1' + url,
+              headers: {
+                'X-LC-Id': 'UWPKKSPkFHL2NjJhMNAROaVk-gzGzoHsz',
+                'X-LC-Key': 'mE5iLOQA7IQtQusstI82ahjV',
+                'Content-Type': 'application/json',
+              },
+              data: data
+            });
+          };
+          
+            addCount(Counter);
+          
+        });
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

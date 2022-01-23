@@ -1,0 +1,1404 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="企业环境公司为了宣传最新的产品信息，计划搭建 FTP 服务器，为客户提供相关文档的下载。对所有互联网开放共享目录，允许下载产品信息，禁止上传。公司的合作单位能够使用 FTP 服务器进行上传和下载，但不可以删除数据。并且保证服务器的稳定性，进行适当优化设置。 需求分析根据企业的需求，对于不同用户进行不同的权限限制，FTP 服务器需要实现用户的审核。需考虑到服务器的安全性，所以关闭实体用户登录，使用虚">
+<meta property="og:type" content="article">
+<meta property="og:title" content="vsftpd安装与配置">
+<meta property="og:url" content="http://yoursite.com/2019/04/19/FTP/vsftpd安装与配置/index.html">
+<meta property="og:site_name" content="Zong&#39;s Blog">
+<meta property="og:description" content="企业环境公司为了宣传最新的产品信息，计划搭建 FTP 服务器，为客户提供相关文档的下载。对所有互联网开放共享目录，允许下载产品信息，禁止上传。公司的合作单位能够使用 FTP 服务器进行上传和下载，但不可以删除数据。并且保证服务器的稳定性，进行适当优化设置。 需求分析根据企业的需求，对于不同用户进行不同的权限限制，FTP 服务器需要实现用户的审核。需考虑到服务器的安全性，所以关闭实体用户登录，使用虚">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/292448-5d35e6e4a91285fd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/292448-4e4d03754f95841c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/292448-1cb8f912ea8bbafc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/292448-cb31165e8a41aa1f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/292448-dc99eae704aa45c0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/292448-ac204c9cde142045.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/292448-d9288210fa461d98.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/292448-234dd604a8c0714e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/292448-844afa1fa769454c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/292448-425fd09a48b321d2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/292448-000ff79c257b347e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2022-01-06T13:21:26.285Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="vsftpd安装与配置">
+<meta name="twitter:description" content="企业环境公司为了宣传最新的产品信息，计划搭建 FTP 服务器，为客户提供相关文档的下载。对所有互联网开放共享目录，允许下载产品信息，禁止上传。公司的合作单位能够使用 FTP 服务器进行上传和下载，但不可以删除数据。并且保证服务器的稳定性，进行适当优化设置。 需求分析根据企业的需求，对于不同用户进行不同的权限限制，FTP 服务器需要实现用户的审核。需考虑到服务器的安全性，所以关闭实体用户登录，使用虚">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/292448-5d35e6e4a91285fd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://yoursite.com/2019/04/19/FTP/vsftpd安装与配置/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>vsftpd安装与配置 | Zong's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Zong's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">技术博客</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/19/FTP/vsftpd安装与配置/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Zong">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Zong's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">vsftpd安装与配置
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-04-19 00:00:00" itemprop="dateCreated datePublished" datetime="2019-04-19T00:00:00+08:00">2019-04-19</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2022-01-06 21:21:26" itemprop="dateModified" datetime="2022-01-06T21:21:26+08:00">2022-01-06</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/FTP/" itemprop="url" rel="index"><span itemprop="name">FTP</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+            <span id="/2019/04/19/FTP/vsftpd安装与配置/" class="leancloud_visitors" data-flag-title="vsftpd安装与配置">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读次数：</span>
+              
+                <span class="leancloud-visitors-count"></span>
+            </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="企业环境"><a href="#企业环境" class="headerlink" title="企业环境"></a>企业环境</h2><p>公司为了宣传最新的产品信息，计划搭建 FTP 服务器，为客户提供相关文档的下载。对所有互联网开放共享目录，允许下载产品信息，禁止上传。公司的合作单位能够使用 FTP 服务器进行上传和下载，但不可以删除数据。并且保证服务器的稳定性，进行适当优化设置。</p>
+<h2 id="需求分析"><a href="#需求分析" class="headerlink" title="需求分析"></a>需求分析</h2><p>根据企业的需求，对于不同用户进行不同的权限限制，FTP 服务器需要实现用户的审核。需考虑到服务器的安全性，所以关闭实体用户登录，使用虚拟帐号验证机制，并对不同虚拟帐号设置不同的权限。为了保证服务器的性能，还需要根据用户的等级，限制客户端的连接数及下载速度。</p>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum -y install vsftpd</span><br></pre></td></tr></table></figure>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><h3 id="1、创建用户数据库"><a href="#1、创建用户数据库" class="headerlink" title="1、创建用户数据库"></a>1、创建用户数据库</h3><p>（1）创建用户文本文件<br>先建立用户文本文件 <code>vsftpd_virtualuser.txt</code>，添加两个虚拟帐号，公共帐号 ftp 及客户帐号 vip。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">touch /etc/vsftpd/vsftpd_virtualuser.txt</span><br><span class="line">vim /etc/vsftpd/vsftpd_virtualuser.txt</span><br></pre></td></tr></table></figure></p>
+<p>格式：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">虚拟帐号 1</span><br><span class="line">密码</span><br><span class="line">虚拟帐号 2</span><br><span class="line">密码</span><br></pre></td></tr></table></figure></p>
+<p>本文使用账号和密码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ftp</span><br><span class="line">123456</span><br><span class="line">vip</span><br><span class="line">456789</span><br></pre></td></tr></table></figure></p>
+<p>保存退出。<br>（2）生成数据库<br>保存虚拟帐号和密码的文本文件无法被系统帐号直接调用。我们需要使用 <code>db_load</code> 命令生成 db 数据库文件。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db_load -T -t hash -f /etc/vsftpd/vsftpd_virtualuser.txt /etc/vsftpd/vsftpd_virtualuser.db</span><br></pre></td></tr></table></figure></p>
+<p>（3）修改数据库文件访问权限<br>数据库文件中保存着虚拟帐号的密码信息，为了防止非法用户盗取，我们可以修改该文件的访问权限。生成的认证文件的权限应设置为只对 root 用户可读可写，即 600。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod 600 /etc/vsftpd/vsftpd_virtualuser.db</span><br></pre></td></tr></table></figure></p>
+<h3 id="2、配置-PAM-文件"><a href="#2、配置-PAM-文件" class="headerlink" title="2、配置 PAM 文件"></a>2、配置 PAM 文件</h3><p>为了使服务器能够使用数据库文件，对客户端进行身份验证，需要调用系统的 PAM 模块.PAM(Plugable Authentication Module)为可插拔认证模块，不必重新安装应用系统，通过修改指定的配置文件，调整对该程序的认证方式。PAM 模块配置文件路径为/etc/pam.d/目录，此目录下保存着大量与认证有关的配置文件，并以服务名称命名。<br>修改 vsftpd 对应的 PAM 配置文件<code>/etc/pam.d/vsftpd</code>，将默认配置使用“#”全部注释，添加相应字段。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">auth       required     pam_userdb.so   db=/etc/vsftpd/vsftpd_virtualuser</span><br><span class="line">account    required     pam_userdb.so   db=/etc/vsftpd/vsftpd_virtualuser</span><br></pre></td></tr></table></figure></p>
+<h3 id="3、创建虚拟帐号对应的系统用户"><a href="#3、创建虚拟帐号对应的系统用户" class="headerlink" title="3、创建虚拟帐号对应的系统用户"></a>3、创建虚拟帐号对应的系统用户</h3><p>对于公共帐号和客户帐号，因为需要配置不同的权限，所以可以将两个帐号的目录进行隔离，控制用户的文件访问。公共帐号 ftp 对应系统帐号 ftpuser，并指定其主目录为/var/ftp/share，而客户帐号 vip 对应系统帐号 ftpvip，指定主目录为/var/ftp/vip。</p>
+<p>如果不设置可执行用户登录会报不能更改目录错误。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">useradd -d /var/ftp/share ftpuser</span><br><span class="line">useradd -d /var/ftp/vip ftpvip</span><br><span class="line"></span><br><span class="line">chmod -R 500 /var/ftp/share/</span><br><span class="line">chmod -R 700 /var/ftp/vip/</span><br></pre></td></tr></table></figure></p>
+<p>公共帐号 ftp 只允许下载，修改 share 目录其他用户权限为 <code>rx</code> 可读可执行。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod -R 500 /var/ftp/share/</span><br></pre></td></tr></table></figure></p>
+<p>客户帐号 vip 允许上传和下载，所以对 vip 目录权限设置为 rwx，可读可写可执行。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod -R 700 /var/ftp/vip/</span><br></pre></td></tr></table></figure></p>
+<h3 id="4、建立配置文件"><a href="#4、建立配置文件" class="headerlink" title="4、建立配置文件"></a>4、建立配置文件</h3><p>设置多个虚拟帐号的不同权限，若使用一个配置文件无法实现此功能，需要为每个虚拟帐号建立独立的配置文件，并根据需要进行相应的设置。<br>（1）修改 vsftpd.conf 主配置文件<br>配置主配置文件 <code>/etc/vsftpd/vsftpd.conf</code> 添加虚拟帐号的共同设置并添加 <code>user_config_dir</code> 字段，定义虚拟帐号的配置文件目录。<br>禁用匿名用户登录并启用本地用户登录设置：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">anonymous_enable=NO</span><br><span class="line">local_enable=YES</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"># 将所有本地用户限制在家目录中，NO 则不限制</span><br><span class="line">chroot_local_user=YES</span><br><span class="line"># 配置 vsftpd 使用的 PAM 模块为 vsftpd</span><br><span class="line">pam_service_name=vsftpd</span><br><span class="line"># 设置虚拟帐号的主目录为/vuserconfig</span><br><span class="line">user_config_dir=/etc/vsftpd/vuserconfig</span><br><span class="line"># 设置 FTP 服务器最大接入客户端数为 300 个</span><br><span class="line">max_clients=300</span><br><span class="line"># 设置每个 IP 地址最大连接数为 10 个</span><br><span class="line">max_per_ip=10</span><br></pre></td></tr></table></figure>
+<p>（2）建立虚拟帐号配置文件<br>在 <code>user_config_dir</code> 指定路径下，建立与虚拟帐号同名的配置文件并添加相应的配置字段。<br>首先建立公共帐号 ftp 的配置文件：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/vsftpd/vuserconfig/ftp</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># 开启虚拟帐号登录</span><br><span class="line">guest_enable=yes</span><br><span class="line"># 设置 ftp 对应的系统帐号为 ftpuser</span><br><span class="line">guest_username=ftpuser</span><br><span class="line"># 允许匿名用户浏览器整个服务器的文件系统</span><br><span class="line">anon_world_readable_only=no</span><br><span class="line"># 限定传输速率为 50KB/s</span><br><span class="line">anon_max_rate=50000</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注意：<br>vsftpd 对于文件传输速度限制并不是绝对锁定在一个数值上哈，而是在  80%~120%之间变化。比如设置 100KB/s ，则实际是速度在 80KB/s~120KB/s 之间变化。</p>
+</blockquote>
+<p>下面是客户帐号的配置文件 vip：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/vsftpd/vuserconfig/vip</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"># 开启虚拟帐号登录</span><br><span class="line">guest_enable=yes</span><br><span class="line"># 设置 ftp 对应的系统帐号为 ftpvip</span><br><span class="line">guest_username=ftpvip</span><br><span class="line"># 允许匿名用户浏览器整个服务器的文件系统</span><br><span class="line">anon_world_readable_only=no</span><br><span class="line"># 允许在文件系统写入权限</span><br><span class="line">write_enable=yes</span><br><span class="line"># 允许创建文件夹</span><br><span class="line">anon_mkdir_write_enable=yes</span><br><span class="line"># 开启匿名帐号的上传功能</span><br><span class="line">anon_upload_enable=yes</span><br><span class="line"># 限定传输速度为 100KB/s</span><br><span class="line">anon_max_rate=100000</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>如果需要删除权限，可在配置中添加：<br><code>anon_other_write_enable=YES</code></p>
+</blockquote>
+<h3 id="5、重启-vsftpd-使配置生效"><a href="#5、重启-vsftpd-使配置生效" class="headerlink" title="5、重启 vsftpd 使配置生效"></a>5、重启 vsftpd 使配置生效</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl restart vsftpd</span><br></pre></td></tr></table></figure>
+<h3 id="6、测试"><a href="#6、测试" class="headerlink" title="6、测试"></a>6、测试</h3><p>（1）公共帐号 ftp 测试<br>在公共帐号测试前，我们先建立个测试文件<code>productinfo.xls</code>。<br>公共帐号登录 ftp 服务器<br><img src="https://upload-images.jianshu.io/upload_images/292448-5d35e6e4a91285fd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="登录"><br>登录成功<br><img src="https://upload-images.jianshu.io/upload_images/292448-4e4d03754f95841c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="登录成功"><br>测试下载，ok，成功<br><img src="https://upload-images.jianshu.io/upload_images/292448-1cb8f912ea8bbafc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="下载"><br>测试上传文件及文件夹，不成功<br><img src="https://upload-images.jianshu.io/upload_images/292448-cb31165e8a41aa1f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="上传失败"><br>最后测试限速 50KB/s<br><img src="https://upload-images.jianshu.io/upload_images/292448-dc99eae704aa45c0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="限速"><br>达成目标。<br>（2）客户帐号 vip 测试<br>客户帐号 vip 登录<br><img src="https://upload-images.jianshu.io/upload_images/292448-ac204c9cde142045.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="登录"><br>登录成功<br><img src="https://upload-images.jianshu.io/upload_images/292448-d9288210fa461d98.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="登录成功"><br>测试上传，ok，成功<br><img src="https://upload-images.jianshu.io/upload_images/292448-234dd604a8c0714e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="上传"><br>测试下载，ok，成功<br><img src="https://upload-images.jianshu.io/upload_images/292448-844afa1fa769454c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="下载"><br>测试删除，ok，不成功<br><img src="https://upload-images.jianshu.io/upload_images/292448-425fd09a48b321d2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="删除"><br>测试限速下载 100KB/s<br><img src="https://upload-images.jianshu.io/upload_images/292448-000ff79c257b347e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="限速"><br>达成目标需求。</p>
+<p><strong>常见错误及解决办法</strong></p>
+<ol>
+<li><p>cannot change directory<br>关闭SeLinux：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setenforce 0</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>500 OOPS: vsftpd: refusing to run with writable root inside chroot()<br>vsftpd.conf添加配置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">allow_writeable_chroot=YES</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/19/JVM/JVM系列(七)-jvm调优-工具篇/" rel="next" title="JVM系列(七)-jvm调优-工具篇">
+                <i class="fa fa-chevron-left"></i> JVM系列(七)-jvm调优-工具篇
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/04/21/Spring Cloud/zuul/" rel="prev" title="Zuul">
+                Zuul <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="gitalk-container">
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Zong</p>
+              <div class="site-description motion-element" itemprop="description"></div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">166</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                      <a href="/categories/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">31</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/zkzong" title="GitHub &rarr; https://github.com/zkzong" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#企业环境"><span class="nav-number">1.</span> <span class="nav-text">企业环境</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#需求分析"><span class="nav-number">2.</span> <span class="nav-text">需求分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装"><span class="nav-number">3.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#解决方案"><span class="nav-number">4.</span> <span class="nav-text">解决方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、创建用户数据库"><span class="nav-number">4.1.</span> <span class="nav-text">1、创建用户数据库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、配置-PAM-文件"><span class="nav-number">4.2.</span> <span class="nav-text">2、配置 PAM 文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3、创建虚拟帐号对应的系统用户"><span class="nav-number">4.3.</span> <span class="nav-text">3、创建虚拟帐号对应的系统用户</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4、建立配置文件"><span class="nav-number">4.4.</span> <span class="nav-text">4、建立配置文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5、重启-vsftpd-使配置生效"><span class="nav-number">4.5.</span> <span class="nav-text">5、重启 vsftpd 使配置生效</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6、测试"><span class="nav-number">4.6.</span> <span class="nav-text">6、测试</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Zong</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.0"></script>
+
+  <script src="/js/motion.js?v=7.1.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.1.0"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.1.0"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.0"></script>
+<script src="/js/post-details.js?v=7.1.0"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.0"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+    
+
+<script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+
+
+<script src="//cdn.jsdelivr.net/npm/js-md5@0.7.3/src/md5.min.js"></script>
+
+<script>
+  var gitalk = new Gitalk({
+    clientID: '73066bdec38692537c94',
+    clientSecret: 'b1e5d41ba29fae3ae6eaae2b7920971f33730a9f',
+    repo: 'zkzong.github.io',
+    owner: 'zkzong',
+    admin: ['zkzong'],
+    id: md5(location.pathname),
+    
+      language: window.navigator.language || window.navigator.userLanguage,
+    
+    distractionFreeMode: 'true'
+  });
+  gitalk.render('gitalk-container');
+</script>
+
+  
+
+
+  
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+  
+  <script>
+    
+    function addCount(Counter) {
+      var $visitors = $('.leancloud_visitors');
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+
+      Counter('get', '/classes/Counter', { where: JSON.stringify({ url }) })
+        .done(function({ results }) {
+          if (results.length > 0) {
+            var counter = results[0];
+            
+            Counter('put', '/classes/Counter/' + counter.objectId, JSON.stringify({ time: { '__op': 'Increment', 'amount': 1 } }))
+            
+              .done(function() {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.time + 1);
+              })
+            
+              .fail(function ({ responseJSON }) {
+                console.log('Failed to save Visitor num, with error message: ' + responseJSON.error);
+              })
+          } else {
+            
+              Counter('post', '/classes/Counter', JSON.stringify({ title: title, url: url, time: 1 }))
+                .done(function() {
+                  var $element = $(document.getElementById(url));
+                  $element.find('.leancloud-visitors-count').text(1);
+                })
+                .fail(function() {
+                  console.log('Failed to create');
+                });
+            
+          }
+        })
+        .fail(function ({ responseJSON }) {
+          console.log('LeanCloud Counter Error: ' + responseJSON.code + ' ' + responseJSON.error);
+        });
+    }
+    
+
+    $(function() {
+      $.get('https://app-router.leancloud.cn/2/route?appId=' + 'UWPKKSPkFHL2NjJhMNAROaVk-gzGzoHsz')
+        .done(function({ api_server }) {
+          var Counter = function(method, url, data) {
+            return $.ajax({
+              method: method,
+              url: 'https://' + api_server + '/1.1' + url,
+              headers: {
+                'X-LC-Id': 'UWPKKSPkFHL2NjJhMNAROaVk-gzGzoHsz',
+                'X-LC-Key': 'mE5iLOQA7IQtQusstI82ahjV',
+                'Content-Type': 'application/json',
+              },
+              data: data
+            });
+          };
+          
+            addCount(Counter);
+          
+        });
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

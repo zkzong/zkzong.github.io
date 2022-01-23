@@ -1,0 +1,1498 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="Spring BootYAML目前还有—些不足，它无法通过@PropertySource注解来加载配置。 @Value注解加载属性值的时候可以支持两种表达式来进行配置，如下所示。  一种是PlaceHolder方式，格式为＄｛．．．｝，大括号内为PlaceHolder。 另一种是使用SpEL 表达式(Spring Expression Language)，格式为＃｛．．．｝，大括号内为SpEL表达">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring Cloud微服务实战">
+<meta property="og:url" content="http://yoursite.com/2019/04/21/Spring Cloud/Spring Cloud微服务实战/index.html">
+<meta property="og:site_name" content="Zong&#39;s Blog">
+<meta property="og:description" content="Spring BootYAML目前还有—些不足，它无法通过@PropertySource注解来加载配置。 @Value注解加载属性值的时候可以支持两种表达式来进行配置，如下所示。  一种是PlaceHolder方式，格式为＄｛．．．｝，大括号内为PlaceHolder。 另一种是使用SpEL 表达式(Spring Expression Language)，格式为＃｛．．．｝，大括号内为SpEL表达">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2022-01-06T13:21:26.308Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Spring Cloud微服务实战">
+<meta name="twitter:description" content="Spring BootYAML目前还有—些不足，它无法通过@PropertySource注解来加载配置。 @Value注解加载属性值的时候可以支持两种表达式来进行配置，如下所示。  一种是PlaceHolder方式，格式为＄｛．．．｝，大括号内为PlaceHolder。 另一种是使用SpEL 表达式(Spring Expression Language)，格式为＃｛．．．｝，大括号内为SpEL表达">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://yoursite.com/2019/04/21/Spring Cloud/Spring Cloud微服务实战/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Spring Cloud微服务实战 | Zong's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Zong's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">技术博客</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/21/Spring Cloud/Spring Cloud微服务实战/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Zong">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Zong's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Spring Cloud微服务实战
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-04-21 00:00:00" itemprop="dateCreated datePublished" datetime="2019-04-21T00:00:00+08:00">2019-04-21</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2022-01-06 21:21:26" itemprop="dateModified" datetime="2022-01-06T21:21:26+08:00">2022-01-06</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Spring-Cloud/" itemprop="url" rel="index"><span itemprop="name">Spring Cloud</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+            <span id="/2019/04/21/Spring Cloud/Spring Cloud微服务实战/" class="leancloud_visitors" data-flag-title="Spring Cloud微服务实战">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读次数：</span>
+              
+                <span class="leancloud-visitors-count"></span>
+            </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="Spring-Boot"><a href="#Spring-Boot" class="headerlink" title="Spring Boot"></a>Spring Boot</h2><p>YAML目前还有—些不足，它无法通过@PropertySource注解来加载配置。</p>
+<p>@Value注解加载属性值的时候可以支持两种表达式来进行配置，如下所示。</p>
+<ul>
+<li>一种是PlaceHolder方式，格式为＄｛．．．｝，大括号内为PlaceHolder。</li>
+<li>另一种是使用SpEL 表达式(Spring Expression Language)，格式为＃｛．．．｝，大括号内为SpEL表达式。</li>
+</ul>
+<h2 id="Eureka"><a href="#Eureka" class="headerlink" title="Eureka"></a>Eureka</h2><p>Spring Cloud Eureka，使用Netflix Eureka来实现服务注册与发现，它既包含了服务端组件，也包含了客户端组件。Eureka服务端，也称为服务注册中心。Eureka客户端，主要处理服务的注册与发现。</p>
+<p>在默认设置下，服务注册中心也会将自己作为客户端来尝试注册它自己，所以我们需要禁用它的客户端注册行为，只需在application.properties中增加如下配置：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">server.port=1111</span><br><span class="line"></span><br><span class="line">eureka.instance.hostname=localhost</span><br><span class="line"></span><br><span class="line">eureka.client.register-with-eureka=false</span><br><span class="line">eureka.client.fetch-registry=false</span><br><span class="line">eureka.client.serviceUrl.defaultZone=http://$&#123;eureka.instance.hostname&#125;:$&#123;server.port&#125;/eureka/</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>eureka.client.register-with-eureka: 由于该应用为注册中心，所以设置为false, 代表不向注册中心注册自己。</li>
+<li>eureka.client.fetch-registry: 由于注册中心的职责就是维护服务实例，它并不需要去检索服务， 所以也设置为false。</li>
+</ul>
+<p>Ribbon是一个基于HTTP和TCP的客户端负载均衡器，它可以在通过客户端中配置的ribbonServerList服务端列表去轮询访问以达到均衡负载的作用。当Ribbon与Eureka联合使用时，Ribbon的服务实例清单RibbonServerList会被DiscoveryEnabledNIWSServerList重<br>写，扩展成从Eureka注册中心中获取服务端列表。同时它也会用NIWSDiscoveryPing来取代IPing，它将职责委托给Eureka来确定服务端是否已经启动。</p>
+<p>为了服务注册中心的安全考虑，很多时候我们都会为服务注册中心加入安全校验。这个时候，在配置serviceUrl时，需要在value值的URL中加入相应的安全校验信息，比如http://<username>:<password>@localhost:1111/eureka。其中，<username>为安全校验信息的用户名，<password>为该用户的密码。</password></username></password></username></p>
+<h2 id="Ribbon"><a href="#Ribbon" class="headerlink" title="Ribbon"></a>Ribbon</h2><p>Spring Cloud Ribbon是一个基于HTTP和TCP的客户端负载均衡工具，不需要独立部署。</p>
+<p>通过Spring Cloud Ribbon的封装，在微服务架构中使用客户端负载均衡调用非常简单，只需要如下两步：</p>
+<ul>
+<li>服务提供者只需要启动多个服务实例并注册到一个注册中心或是多个相关联的服务注册中心。</li>
+<li>服务消费者直接通过调用被@LoadBalanced注解修饰过的RestTemplate来实现面向服务的接口调用。</li>
+</ul>
+<h3 id="GET请求"><a href="#GET请求" class="headerlink" title="GET请求"></a>GET请求</h3><p>在RestTemplate中，对GET请求可以通过如下两个方法进行调用实现。</p>
+<ol>
+<li>getForEntity函数</li>
+<li>getForObject函数</li>
+</ol>
+<h3 id="POST请求"><a href="#POST请求" class="headerlink" title="POST请求"></a>POST请求</h3><p>在RestTemplate中，对POST请求可以通过如下三个方法进行调用实现。</p>
+<ol>
+<li>postForEntity函数</li>
+<li>postForObject函数</li>
+<li>postForLocation函数</li>
+</ol>
+<h3 id="PUT请求"><a href="#PUT请求" class="headerlink" title="PUT请求"></a>PUT请求</h3><p>在RestTemplate中，对PUT请求可以通过put方法进行调用实现。</p>
+<h3 id="DELETE请求"><a href="#DELETE请求" class="headerlink" title="DELETE请求"></a>DELETE请求</h3><p>在RestTemplate中，对DELETE请求可以通过delete方法进行调用实现。</p>
+<p>Spring Cloud Ribbon默认实现了区域亲和策略，可以通过Eureka实例的元数据配置来实现区域化的实例配置方案：<br>eureka.instance.metadataMap.zone=shanghai</p>
+<p>禁用Eureka对Ribbon服务实例的维护实现：<br>ribbon.eureka.enabled=false</p>
+<h2 id="Hystrix"><a href="#Hystrix" class="headerlink" title="Hystrix"></a>Hystrix</h2><p>@SpringCloudApplication</p>
+<h2 id="Feign"><a href="#Feign" class="headerlink" title="Feign"></a>Feign</h2><p>Spring Cloud Feign基于Netflix Feign实现，整合了Spring Cloud Ribbon和Spring Cloud Hystrix，除了提供这两者的强大功能之外，它还提供了一种声明式的Web服务客户端定义方式。</p>
+<p>在定义各参数绑定时，@RequestParam、@RequestHeader 等可以指定参数名称的注解， 它们的 value 千万不能少。 在 SpringMVC 程序中，这些注解会根据参数名来作为默认值，但是在Feign 中绑定参数必须通过 value 属性来指明具体的参数名，不然会抛出口legalStateException 异常， value 属性不能为空。</p>
+<h3 id="Ribbon配置"><a href="#Ribbon配置" class="headerlink" title="Ribbon配置"></a>Ribbon配置</h3><h4 id="全局配置"><a href="#全局配置" class="headerlink" title="全局配置"></a>全局配置</h4><p>ribbon.ConnectTimeout=500<br>ribbon.ReadTimeout=SOOO</p>
+<h4 id="指定服务配置"><a href="#指定服务配置" class="headerlink" title="指定服务配置"></a>指定服务配置</h4><p>使用@FeignClient注解，在初始化过程中，Spring Cloud Feign会根据该注解的name属性或value属性指定的服务名，自动创建一个同名的Ribbon客户端。也就是说，在之前的示例中，使用@FeignClient(value = “HELLO-SERVICE”)来创 建 Feign 客户端的时候，同时也创建了一个名为HELLO-SERV工CE的Ribbon客户端。既然如此，我们就可以使用@FeignClient注解中的name或value属性值来设置对应的Ribbon参数，比如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">HELLO-SERVICE.ribbon.ConnectTimeout=SOO</span><br><span class="line">HELLO-SERVICE.ribbon.ReadTimeout=2000</span><br><span class="line">HELLO-SERVICE.ribbon.OkToRetryOnAllOperations=true</span><br><span class="line">HELLO-SERVICE.ribbon.MaxAutoRetriesNextServer=2</span><br><span class="line">HELLO-SERVICE.ribbon.MaxAutoRetries=l</span><br></pre></td></tr></table></figure></p>
+<h3 id="Hystrix配置"><a href="#Hystrix配置" class="headerlink" title="Hystrix配置"></a>Hystrix配置</h3><h4 id="全局配置-1"><a href="#全局配置-1" class="headerlink" title="全局配置"></a>全局配置</h4><p>hystrix.command.default.execution.isolation.thread.timeoutinMilliseconds=5OOO<br>feign.hystrix.enabled=false<br>hystrix.command.default.execution.timeout.enabled=false</p>
+<h4 id="禁用Hystrix"><a href="#禁用Hystrix" class="headerlink" title="禁用Hystrix"></a>禁用Hystrix</h4><p>如果不想全局地关闭Hystrix支持, 而只想<br>针对某个 服务客户端关闭Hystrix 支待时, 需要通过使用@Scope (“prototype”)注解为<br>指定的客户端配置Feign.Builder实例, 详细实现步骤如下所示。</p>
+<ul>
+<li><p>构建一个关闭Hystrix的配置类</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">@Configuration</span><br><span class="line">public class DisableHystrixConfiguration &#123;</span><br><span class="line">    @Bean</span><br><span class="line">    @Scope(&quot;prototype&quot;)</span><br><span class="line">    public Feign.Builder feignBuilder() &#123;</span><br><span class="line">        return Feign.builder();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在HelloService的@FeignClient注解中,通过configuration参数引入上面实现的配置。</p>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">@FeignClient(name = &quot;HELLO-SERVICE&quot;, configuration = DisableHystrixConfiguration.class)</span><br><span class="line">public interface HelloService &#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="指定命令配置"><a href="#指定命令配置" class="headerlink" title="指定命令配置"></a>指定命令配置</h4><h4 id="服务降级配置"><a href="#服务降级配置" class="headerlink" title="服务降级配置"></a>服务降级配置</h4><ul>
+<li>通过@HystrixCommand注解的fallback参数来指定具体的服务降级处理方法。</li>
+<li>为Feign客户端的定义接口编写一个具体的接口实现类。</li>
+</ul>
+<h3 id="其他配置"><a href="#其他配置" class="headerlink" title="其他配置"></a>其他配置</h3><h4 id="请求压缩"><a href="#请求压缩" class="headerlink" title="请求压缩"></a>请求压缩</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">feign.compression.request.enabled=true</span><br><span class="line">feign.compression.response.enabled=true</span><br><span class="line">feign.compression.request.enabled=true</span><br><span class="line"></span><br><span class="line">feign.compression.request.mime-types=text/xml,application/xml,application/json</span><br><span class="line">feign.compression.request.min-request-size=2048</span><br></pre></td></tr></table></figure>
+<h4 id="日志配置"><a href="#日志配置" class="headerlink" title="日志配置"></a>日志配置</h4><p><code>logging.level.com.didispace.web.HelloSevice=DEBUG</code></p>
+<p>只是添加了如上配置, 还无法实现对 DEBUG 日志的输出。 这时由于 Feign 客<br>户端默认的 Logger.Level 对象定义为 NONE 级别, 该级别不会记录任何 Feign 调用过程<br>中的信息, 所以我们需要调整它的级别, 针对全局的日志级别, 可以在应用主类中直接加<br>入 Logger.Level 的 Bean 创建, 具体如下:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">@EnableFeignClients</span><br><span class="line">@EnableDiscoveryClient</span><br><span class="line">@SpringBootApplication</span><br><span class="line">public class ConsumerApplication &#123;</span><br><span class="line">	@Bean</span><br><span class="line">	Logger.Level feignLoggerLevel() &#123;</span><br><span class="line">		return Logger.Level.FULL;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public static void main(String[J args) &#123;</span><br><span class="line">		SpringApplication.run(ConsumerApplication.class, args);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>也可以通过实现配置类，然后在具体的Feign客户端来指定配置类以实现是否要调整不同的日志级别，比如下面的实现:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">@Configuration</span><br><span class="line">public class FullLogConfiguration &#123;</span><br><span class="line">	@Bean</span><br><span class="line">	Logger.Level feignLoggerLevel() &#123;</span><br><span class="line">		return Logger.Level.FULL;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">@FeignClient(name = &quot;HELLO-SERVICE&quot;, configuration = FullLogConfiguration.class)</span><br><span class="line">public interface HelloService &#123;</span><br><span class="line">	...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>对于 Feign 的 Logger 级别主要有下面 4 类, 可根据实际需要进行调整使用。</p>
+<ul>
+<li>NONE: 不记录任何信息。</li>
+<li>BASIC: 仅记录请求方法、URL以及响应状态码和执行时间。</li>
+<li>HEADERS: 除了记录BASIC级别的信息之外, 还会记录请求和响应的头信息。</li>
+<li>FULL: 记录所有请求与响应的明细, 包括头信息、 请求体、 元数据等。</li>
+</ul>
+<h2 id="Zuul"><a href="#Zuul" class="headerlink" title="Zuul"></a>Zuul</h2><ol>
+<li>路由规则与服务实例的维护</li>
+<li>对于类似签名校验、登录校验在微服务架构中的冗余问题</li>
+</ol>
+<h3 id="请求路由"><a href="#请求路由" class="headerlink" title="请求路由"></a>请求路由</h3><h3 id="请求过滤"><a href="#请求过滤" class="headerlink" title="请求过滤"></a>请求过滤</h3><ol>
+<li>继承ZuulFilter实现类</li>
+<li>在Application中创建Bean<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">@Bean</span><br><span class="line">public AccessFilter accessFilter() &#123;</span><br><span class="line">    return new AccessFilter();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<ul>
+<li>它作为系统的统一入口,屏蔽了系统内部各个微服务的细节。</li>
+<li>它可以与服务治理框架结合,实现自动化的服务实例维护以及负载均衡的路由转发。</li>
+<li>它可以实现接口权限校验与微服务业务逻辑的解耦。</li>
+<li>通过服务网关中的过炖器,在各生命周期中去校验请求的内容,将原本在对外服务层做的校验前移,保证了微服务的无状态性,同时降低了微服务的测试难度,让服务本身更集中关注业务逻辑的处理。</li>
+</ul>
+<p>Ant风格的路径表达式：</p>
+<table>
+<thead>
+<tr>
+<th>通配符</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>?</td>
+<td>匹配任意单个字符</td>
+</tr>
+<tr>
+<td>*</td>
+<td>匹配任意数量的字符</td>
+</tr>
+<tr>
+<td>**</td>
+<td>匹配任意数量的字符，支持多级目录</td>
+</tr>
+</tbody>
+</table>
+<h3 id="Hystrix和Ribbon支持"><a href="#Hystrix和Ribbon支持" class="headerlink" title="Hystrix和Ribbon支持"></a>Hystrix和Ribbon支持</h3><p>当使用path与url的映射关系来配置路由规则的时候，对于路由转发的请求不会采用HystrixCommand来包装，所以这类路由请求没有现成隔离和断路器的保护，并且也不会有负载均衡的能力。因此，在使用Zuul的时候尽量使用path和serviceId的组合来进行配置。</p>
+<h2 id="Config"><a href="#Config" class="headerlink" title="Config"></a>Config</h2><p>client端的配置文件必须是<code>bootstrap.properties</code>。</p>
+<p>获取配置属性的方法有两种：</p>
+<ol>
+<li>@Value</li>
+<li>Environment</li>
+</ol>
+<h3 id="加密解密"><a href="#加密解密" class="headerlink" title="加密解密"></a>加密解密</h3><ol>
+<li>替换JCE</li>
+<li>相关端点<br>/encrypt/status：查看加密功能状态的端点。<br>/key：查看密钥的端点。<br>/encrypt：对请求的body内容进行加密的端点。<br>/decrypt：对请求的body内容进行解密的端点。</li>
+</ol>
+<p>keytool -genkeypair -alias config-server -keyalg RSA -keystore config-server.keystore</p>
+<h3 id="获取远程配置"><a href="#获取远程配置" class="headerlink" title="获取远程配置"></a>获取远程配置</h3><ol>
+<li>通过向Config Server发送GET请求以直接的方式获取，可用下面的链接形式</li>
+</ol>
+<ul>
+<li>不带{label}分支信息，默认访问master分支，可使用：<ul>
+<li>/{application}-{profile}.yml</li>
+<li>/{application}-{profile}.properties</li>
+</ul>
+</li>
+<li>带{label}分支信息，可使用：<ul>
+<li>/{label}/{application}-{profile}.yml</li>
+<li>/{application}/{profile}[/{label}]</li>
+<li>/{label}/{application}-{profile}.properties</li>
+</ul>
+</li>
+</ul>
+<ol start="2">
+<li>通过客户端配置方式加载的内容如下所示。</li>
+</ol>
+<ul>
+<li>spring.application.name：对应配置文件中的{apptication}内容。</li>
+<li>spring.cloud.config.profile：对应配置文件中{profile} 内容。</li>
+<li>spring.cloud.config.label：对应分支内容，如不配置，默认为master。</li>
+</ul>
+<h3 id="动态刷新配置"><a href="#动态刷新配置" class="headerlink" title="动态刷新配置"></a>动态刷新配置</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;spring-boot-starter-actuator&lt;/artifactId&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+<p>通过POST请求发送到<a href="http://localhost:7002/refresh。" target="_blank" rel="noopener">http://localhost:7002/refresh。</a></p>
+<h2 id="Bus"><a href="#Bus" class="headerlink" title="Bus"></a>Bus</h2><h3 id="Kafka"><a href="#Kafka" class="headerlink" title="Kafka"></a>Kafka</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">tar -xzf kafka_2.11-0.11.0.0.tgz</span><br><span class="line"># 启动zk</span><br><span class="line">bin/zookeeper-server-start.sh config/zookeeper.properties</span><br><span class="line"># 启动Kafka</span><br><span class="line">bin/kafka-server-start.sh config/server.properties</span><br><span class="line"># 创建topic</span><br><span class="line">bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic test</span><br><span class="line"># 查看topic</span><br><span class="line">bin/kafka-topics.sh --list --zookeeper localhost:2181</span><br><span class="line"># 生产者</span><br><span class="line">bin/kafka-console-producer.sh --broker-list localhost:9092 --topic test</span><br><span class="line"># 消费者</span><br><span class="line">bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic test --from-beginning</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/21/Spring Cloud/hystrix/" rel="next" title="Hystrix">
+                <i class="fa fa-chevron-left"></i> Hystrix
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/04/21/Spring Cloud/Spring Cloud/" rel="prev" title="Spring Cloud">
+                Spring Cloud <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="gitalk-container">
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Zong</p>
+              <div class="site-description motion-element" itemprop="description"></div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">166</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                      <a href="/categories/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">31</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/zkzong" title="GitHub &rarr; https://github.com/zkzong" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Spring-Boot"><span class="nav-number">1.</span> <span class="nav-text">Spring Boot</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Eureka"><span class="nav-number">2.</span> <span class="nav-text">Eureka</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ribbon"><span class="nav-number">3.</span> <span class="nav-text">Ribbon</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#GET请求"><span class="nav-number">3.1.</span> <span class="nav-text">GET请求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#POST请求"><span class="nav-number">3.2.</span> <span class="nav-text">POST请求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PUT请求"><span class="nav-number">3.3.</span> <span class="nav-text">PUT请求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DELETE请求"><span class="nav-number">3.4.</span> <span class="nav-text">DELETE请求</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Hystrix"><span class="nav-number">4.</span> <span class="nav-text">Hystrix</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Feign"><span class="nav-number">5.</span> <span class="nav-text">Feign</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Ribbon配置"><span class="nav-number">5.1.</span> <span class="nav-text">Ribbon配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#全局配置"><span class="nav-number">5.1.1.</span> <span class="nav-text">全局配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#指定服务配置"><span class="nav-number">5.1.2.</span> <span class="nav-text">指定服务配置</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Hystrix配置"><span class="nav-number">5.2.</span> <span class="nav-text">Hystrix配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#全局配置-1"><span class="nav-number">5.2.1.</span> <span class="nav-text">全局配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#禁用Hystrix"><span class="nav-number">5.2.2.</span> <span class="nav-text">禁用Hystrix</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#指定命令配置"><span class="nav-number">5.2.3.</span> <span class="nav-text">指定命令配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#服务降级配置"><span class="nav-number">5.2.4.</span> <span class="nav-text">服务降级配置</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#其他配置"><span class="nav-number">5.3.</span> <span class="nav-text">其他配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#请求压缩"><span class="nav-number">5.3.1.</span> <span class="nav-text">请求压缩</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#日志配置"><span class="nav-number">5.3.2.</span> <span class="nav-text">日志配置</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Zuul"><span class="nav-number">6.</span> <span class="nav-text">Zuul</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#请求路由"><span class="nav-number">6.1.</span> <span class="nav-text">请求路由</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#请求过滤"><span class="nav-number">6.2.</span> <span class="nav-text">请求过滤</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Hystrix和Ribbon支持"><span class="nav-number">6.3.</span> <span class="nav-text">Hystrix和Ribbon支持</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Config"><span class="nav-number">7.</span> <span class="nav-text">Config</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#加密解密"><span class="nav-number">7.1.</span> <span class="nav-text">加密解密</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#获取远程配置"><span class="nav-number">7.2.</span> <span class="nav-text">获取远程配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#动态刷新配置"><span class="nav-number">7.3.</span> <span class="nav-text">动态刷新配置</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Bus"><span class="nav-number">8.</span> <span class="nav-text">Bus</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Kafka"><span class="nav-number">8.1.</span> <span class="nav-text">Kafka</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Zong</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.0"></script>
+
+  <script src="/js/motion.js?v=7.1.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.1.0"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.1.0"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.0"></script>
+<script src="/js/post-details.js?v=7.1.0"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.0"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+    
+
+<script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+
+
+<script src="//cdn.jsdelivr.net/npm/js-md5@0.7.3/src/md5.min.js"></script>
+
+<script>
+  var gitalk = new Gitalk({
+    clientID: '73066bdec38692537c94',
+    clientSecret: 'b1e5d41ba29fae3ae6eaae2b7920971f33730a9f',
+    repo: 'zkzong.github.io',
+    owner: 'zkzong',
+    admin: ['zkzong'],
+    id: md5(location.pathname),
+    
+      language: window.navigator.language || window.navigator.userLanguage,
+    
+    distractionFreeMode: 'true'
+  });
+  gitalk.render('gitalk-container');
+</script>
+
+  
+
+
+  
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+  
+  <script>
+    
+    function addCount(Counter) {
+      var $visitors = $('.leancloud_visitors');
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+
+      Counter('get', '/classes/Counter', { where: JSON.stringify({ url }) })
+        .done(function({ results }) {
+          if (results.length > 0) {
+            var counter = results[0];
+            
+            Counter('put', '/classes/Counter/' + counter.objectId, JSON.stringify({ time: { '__op': 'Increment', 'amount': 1 } }))
+            
+              .done(function() {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.time + 1);
+              })
+            
+              .fail(function ({ responseJSON }) {
+                console.log('Failed to save Visitor num, with error message: ' + responseJSON.error);
+              })
+          } else {
+            
+              Counter('post', '/classes/Counter', JSON.stringify({ title: title, url: url, time: 1 }))
+                .done(function() {
+                  var $element = $(document.getElementById(url));
+                  $element.find('.leancloud-visitors-count').text(1);
+                })
+                .fail(function() {
+                  console.log('Failed to create');
+                });
+            
+          }
+        })
+        .fail(function ({ responseJSON }) {
+          console.log('LeanCloud Counter Error: ' + responseJSON.code + ' ' + responseJSON.error);
+        });
+    }
+    
+
+    $(function() {
+      $.get('https://app-router.leancloud.cn/2/route?appId=' + 'UWPKKSPkFHL2NjJhMNAROaVk-gzGzoHsz')
+        .done(function({ api_server }) {
+          var Counter = function(method, url, data) {
+            return $.ajax({
+              method: method,
+              url: 'https://' + api_server + '/1.1' + url,
+              headers: {
+                'X-LC-Id': 'UWPKKSPkFHL2NjJhMNAROaVk-gzGzoHsz',
+                'X-LC-Key': 'mE5iLOQA7IQtQusstI82ahjV',
+                'Content-Type': 'application/json',
+              },
+              data: data
+            });
+          };
+          
+            addCount(Counter);
+          
+        });
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

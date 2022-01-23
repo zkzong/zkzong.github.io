@@ -1,0 +1,1531 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="JSON，全称：JavaScript Object Notation，作为一个常见的轻量级的数据交换格式，应该在一个程序员的开发生涯中是常接触的。简洁和清晰的层次结构使得 JSON 成为理想的数据交换语言。 易于阅读和编写，同时也易于机器解析和生成，并有效地提升网络传输效率。 Java是面向对象的语言，所以我们更多的在项目中是以对象的形式处理业务的，但是在传输的时候我们却要将对象转换为 JSON">
+<meta property="og:type" content="article">
+<meta property="og:title" content="全解史上最快的JOSN解析库 - alibaba Fastjson">
+<meta property="og:url" content="http://yoursite.com/2019/07/11/JSON/全解史上最快的JOSN解析库 - alibaba Fastjson/index.html">
+<meta property="og:site_name" content="Zong&#39;s Blog">
+<meta property="og:description" content="JSON，全称：JavaScript Object Notation，作为一个常见的轻量级的数据交换格式，应该在一个程序员的开发生涯中是常接触的。简洁和清晰的层次结构使得 JSON 成为理想的数据交换语言。 易于阅读和编写，同时也易于机器解析和生成，并有效地提升网络传输效率。 Java是面向对象的语言，所以我们更多的在项目中是以对象的形式处理业务的，但是在传输的时候我们却要将对象转换为 JSON">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/292448-48ce594b6d973a5d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/292448-c9bda211783e828c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2022-01-06T13:21:26.289Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="全解史上最快的JOSN解析库 - alibaba Fastjson">
+<meta name="twitter:description" content="JSON，全称：JavaScript Object Notation，作为一个常见的轻量级的数据交换格式，应该在一个程序员的开发生涯中是常接触的。简洁和清晰的层次结构使得 JSON 成为理想的数据交换语言。 易于阅读和编写，同时也易于机器解析和生成，并有效地提升网络传输效率。 Java是面向对象的语言，所以我们更多的在项目中是以对象的形式处理业务的，但是在传输的时候我们却要将对象转换为 JSON">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/292448-48ce594b6d973a5d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://yoursite.com/2019/07/11/JSON/全解史上最快的JOSN解析库 - alibaba Fastjson/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>全解史上最快的JOSN解析库 - alibaba Fastjson | Zong's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Zong's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">技术博客</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/11/JSON/全解史上最快的JOSN解析库 - alibaba Fastjson/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Zong">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Zong's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">全解史上最快的JOSN解析库 - alibaba Fastjson
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-07-11 00:00:00" itemprop="dateCreated datePublished" datetime="2019-07-11T00:00:00+08:00">2019-07-11</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2022-01-06 21:21:26" itemprop="dateModified" datetime="2022-01-06T21:21:26+08:00">2022-01-06</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/JSON/" itemprop="url" rel="index"><span itemprop="name">JSON</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+            <span id="/2019/07/11/JSON/全解史上最快的JOSN解析库 - alibaba Fastjson/" class="leancloud_visitors" data-flag-title="全解史上最快的JOSN解析库 - alibaba Fastjson">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读次数：</span>
+              
+                <span class="leancloud-visitors-count"></span>
+            </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>JSON，全称：JavaScript Object Notation，作为一个常见的轻量级的数据交换格式，应该在一个程序员的开发生涯中是常接触的。简洁和清晰的层次结构使得 JSON 成为理想的数据交换语言。 易于阅读和编写，同时也易于机器解析和生成，并有效地提升网络传输效率。</p>
+<p>Java是面向对象的语言，所以我们更多的在项目中是以对象的形式处理业务的，但是在传输的时候我们却要将对象转换为 JSON 格式便于传输，而且 JSON 格式一般能解析为大多数的对象格式，而不在乎编程语言。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/292448-48ce594b6d973a5d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="阿里巴巴Logo"></p>
+<p>现在主流的对象与 JSON 互转的工具很多，我们主要介绍今天的主角，阿里巴巴的开源库 - Fastjson。Fastjson是一个Java库，可用于将Java对象转换为其JSON表示。它还可用于将JSON字符串转换为等效的Java对象。Fastjson可以处理任意Java对象，包括您没有源代码的预先存在的对象。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/292448-c9bda211783e828c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="fastjson"></p>
+<h2 id="1-什么是-Fastjson"><a href="#1-什么是-Fastjson" class="headerlink" title="1. 什么是 Fastjson?"></a>1. 什么是 Fastjson?</h2><p>阿里官方给的定义是， fastjson 是阿里巴巴的开源JSON解析库，它可以解析 JSON 格式的字符串，支持将 Java Bean 序列化为 JSON 字符串，也可以从 JSON 字符串反序列化到 JavaBean。</p>
+<h2 id="2-Fastjson-的优点"><a href="#2-Fastjson-的优点" class="headerlink" title="2. Fastjson 的优点"></a>2. Fastjson 的优点</h2><ul>
+<li><strong>速度快</strong><br>fastjson相对其他JSON库的特点是快，从2011年fastjson发布1.1.x版本之后，其性能从未被其他Java实现的JSON库超越。</li>
+<li><strong>使用广泛</strong><br>fastjson在阿里巴巴大规模使用，在数万台服务器上部署，fastjson在业界被广泛接受。在2012年被开源中国评选为最受欢迎的国产开源软件之一。</li>
+<li><strong>测试完备</strong><br>fastjson有非常多的testcase，在1.2.11版本中，testcase超过3321个。每次发布都会进行回归测试，保证质量稳定。</li>
+<li><strong>使用简单</strong><br>fastjson的 API 十分简洁。</li>
+<li><strong>功能完备</strong><br>支持泛型，支持流处理超大文本，支持枚举，支持序列化和反序列化扩展。</li>
+</ul>
+<h2 id="3-怎么获得-Fastjson"><a href="#3-怎么获得-Fastjson" class="headerlink" title="3. 怎么获得 Fastjson"></a>3. 怎么获得 Fastjson</h2><p>你可以通过如下地方下载fastjson:</p>
+<ul>
+<li>maven中央仓库: <a href="http://central.maven.org/maven2/com/alibaba/fastjson/" target="_blank" rel="noopener">http://central.maven.org/maven2/com/alibaba/fastjson/</a></li>
+<li>Sourceforge.net : <a href="https://sourceforge.net/projects/fastjson/files/" target="_blank" rel="noopener">https://sourceforge.net/projects/fastjson/files/</a></li>
+<li>在maven项目的pom文件中直接配置fastjson依赖</li>
+</ul>
+<p>fastjson最新版本都会发布到maven中央仓库，你可以直接依赖。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">     &lt;groupId&gt;com.alibaba&lt;/groupId&gt;</span><br><span class="line">     &lt;artifactId&gt;fastjson&lt;/artifactId&gt;</span><br><span class="line">     &lt;version&gt;x.x.x&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+<p>其中x.x.x是版本号，根据需要使用特定版本，建议使用最新版本。</p>
+<h2 id="4-Fastjson-主要的API"><a href="#4-Fastjson-主要的API" class="headerlink" title="4. Fastjson 主要的API"></a>4. Fastjson 主要的API</h2><p>Fastjson入口类是 com.alibaba.fastjson.JSON，主要的 API 是 JSON.toJSONString 和 parseObject。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">package com.alibaba.fastjson;</span><br><span class="line">public abstract class JSON &#123;</span><br><span class="line">      // Java对象转换为JSON字符串</span><br><span class="line">      public static final String toJSONString(Object object);</span><br><span class="line">      //JSON字符串转换为Java对象</span><br><span class="line">      public static final &lt;T&gt; T parseObject(String text, Class&lt;T&gt; clazz, Feature... features);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>序列化：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">String jsonString = JSON.toJSONString(obj);</span><br></pre></td></tr></table></figure>
+<p>反序列化：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">VO vo = JSON.parseObject(&quot;...&quot;, VO.class);</span><br></pre></td></tr></table></figure>
+<p>泛型反序列化：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">import com.alibaba.fastjson.TypeReference;</span><br><span class="line"></span><br><span class="line">List&lt;VO&gt; list = JSON.parseObject(&quot;...&quot;, new TypeReference&lt;List&lt;VO&gt;&gt;() &#123;&#125;);</span><br></pre></td></tr></table></figure>
+<h2 id="5-Fastjson-的性能"><a href="#5-Fastjson-的性能" class="headerlink" title="5. Fastjson 的性能"></a>5. Fastjson 的性能</h2><p>fastjson是目前java语言中最快的json库，比自称最快的jackson速度还要快，第三方独立测试结果看这里：<a href="https://github.com/eishay/jvm-serializers/wiki" target="_blank" rel="noopener">https://github.com/eishay/jvm-serializers/wiki</a>。</p>
+<p>自行做性能测试时，需关闭循环引用检测的功能。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">JSON.toJSONString(obj, SerializerFeature.DisableCircularReferenceDetect)</span><br><span class="line">VO vo = JSON.parseObject(&quot;...&quot;, VO.class, Feature.DisableCircularReferenceDetect)</span><br></pre></td></tr></table></figure>
+<p>另外，Fastjson 比 Gson 快大约6倍，测试结果可以看这里：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">Checking correctness…</span><br><span class="line">[done]</span><br><span class="line">Pre-warmup… java-built-in hessian kryo protostuff-runtime avro-generic msgpack json/jackson/databind json/jackson/databind-strings json/jackson/db-afterburner json/google-gson/databind json/svenson-databind json/flexjson/databind json/fastjson/databind smile/jackson/databind smile/jackson/db-afterburner smile/protostuff-runtime bson/jackson/databind xml/xstream+c xml/jackson/databind-aalto</span><br><span class="line">[done]</span><br><span class="line">pre. create ser deser shal +deep total size +dfl</span><br><span class="line">java-built-in 63 5523 27765 28084 28162 33686 889 514</span><br><span class="line">hessian 64 3776 6459 6505 6690 10466 501 313</span><br><span class="line">kryo 63 809 962 937 1001 1810 214 133</span><br><span class="line">protostuff-runtime 62 671 903 920 957 1627 241 151</span><br><span class="line">avro-generic 436 1234 1122 1416 1760 2994 221 133</span><br><span class="line">msgpack 61 789 1369 1385 1449 2238 233 146</span><br><span class="line">json/jackson/databind 60 1772 3089 3113 3246 5018 485 261</span><br><span class="line">json/jackson/databind-strings 64 2346 3739 3791 3921 6267 485 261</span><br><span class="line">json/jackson/db-afterburner 64 1482 2220 2233 2323 3805 485 261</span><br><span class="line">json/google-gson/databind 64 7076 4894 4962 5000 12076 486 259</span><br><span class="line">json/svenson-databind 64 5422 12387 12569 12468 17890 495 266</span><br><span class="line">json/flexjson/databind 62 20923 26853 26873 27272 48195 503 273</span><br><span class="line">json/fastjson/databind 63 1250 1208 1206 1247 2497 486 262</span><br><span class="line">smile/jackson/databind 60 1697 2117 2290 2298 3996 338 241</span><br><span class="line">smile/jackson/db-afterburner 60 1300 1614 1648 1703 3003 352 252</span><br><span class="line">smile/protostuff-runtime 61 1275 1612 1638 1685 2961 335 235</span><br><span class="line">bson/jackson/databind 63 5151 6729 6977 6918 12069 506 286</span><br><span class="line">xml/xstreamc 62 6358 13208 13319 13516 19874 487 244</span><br><span class="line">xml/jackson/databind-aalto 62 2955 5332 5465 5584 8539 683 286</span><br></pre></td></tr></table></figure>
+<h2 id="6-Fastjson-使用示例"><a href="#6-Fastjson-使用示例" class="headerlink" title="6. Fastjson 使用示例"></a>6. Fastjson 使用示例</h2><p>我们创建一个班级的对象，和一个学生对象如下：</p>
+<p>班级对象</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">public class Grade &#123;</span><br><span class="line"></span><br><span class="line">    private Long id;</span><br><span class="line">    private String name;</span><br><span class="line">    private List&lt;Student&gt; users = new ArrayList&lt;Student&gt;();</span><br><span class="line"></span><br><span class="line">    // 省略 setter、getter</span><br><span class="line"></span><br><span class="line">    public void addStudent(Student student) &#123;</span><br><span class="line">        users.add(student);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public String toString() &#123;</span><br><span class="line">        return &quot;Grade&#123;&quot; +</span><br><span class="line">                &quot;id=&quot; + id +</span><br><span class="line">                &quot;, name=&apos;&quot; + name + &apos;\&apos;&apos; +</span><br><span class="line">                &quot;, users=&quot; + users +</span><br><span class="line">                &apos;&#125;&apos;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>学生对象</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public class Student &#123;</span><br><span class="line"></span><br><span class="line">    private Long   id;</span><br><span class="line">    private String name;</span><br><span class="line"></span><br><span class="line">    // 省略 setter、getter</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public String toString() &#123;</span><br><span class="line">        return &quot;Student&#123;&quot; +</span><br><span class="line">                &quot;id=&quot; + id +</span><br><span class="line">                &quot;, name=&apos;&quot; + name + &apos;\&apos;&apos; +</span><br><span class="line">                &apos;&#125;&apos;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行的 Main 函数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">public class MainTest &#123;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        Grade group = new Grade();</span><br><span class="line">        group.setId(0L);</span><br><span class="line">        group.setName(&quot;admin&quot;);</span><br><span class="line"></span><br><span class="line">        Student student = new Student();</span><br><span class="line">        student.setId(2L);</span><br><span class="line">        student.setName(&quot;guest&quot;);</span><br><span class="line"></span><br><span class="line">        Student rootUser = new Student();</span><br><span class="line">        rootUser.setId(3L);</span><br><span class="line">        rootUser.setName(&quot;root&quot;);</span><br><span class="line"></span><br><span class="line">        group.addStudent(student);</span><br><span class="line">        group.addStudent(rootUser);</span><br><span class="line"></span><br><span class="line">        // 转换为 JSON</span><br><span class="line">        String jsonString = JSON.toJSONString(group);</span><br><span class="line">        System.out.println(&quot;JSON字符串：&quot; + jsonString);</span><br><span class="line"></span><br><span class="line">        // 转换为 对象BEAN</span><br><span class="line">        Grade grade = JSON.parseObject(jsonString, Grade.class);</span><br><span class="line">        System.out.println(&quot;JavaBean对象：&quot; + grade);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最后的运行结果如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">JSON字符串：</span><br><span class="line">&#123;&quot;id&quot;:0,&quot;name&quot;:&quot;admin&quot;,&quot;users&quot;:[&#123;&quot;id&quot;:2,&quot;name&quot;:&quot;guest&quot;&#125;,&#123;&quot;id&quot;:3,&quot;name&quot;:&quot;root&quot;&#125;]&#125;</span><br><span class="line"></span><br><span class="line">JavaBean对象：</span><br><span class="line">Grade&#123;id=0, name=&apos;admin&apos;, users=[Student&#123;id=2, name=&apos;guest&apos;&#125;, Student&#123;id=3, name=&apos;root&apos;&#125;]&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="7-将对象中的空值输出"><a href="#7-将对象中的空值输出" class="headerlink" title="7. 将对象中的空值输出"></a>7. 将对象中的空值输出</h2><p>在fastjson中，缺省是不输出空值的。无论Map中的null和对象属性中的null，序列化的时候都会被忽略不输出，这样会减少产生文本的大小。但如果需要输出空值怎么做呢？</p>
+<p>如果你需要输出空值，需要使用 <code>SerializerFeature.WriteMapNullValue</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Model obj = ...;</span><br><span class="line">JSON.toJSONString(obj, SerializerFeature.WriteMapNullValue);</span><br></pre></td></tr></table></figure>
+<p>几种空值特别处理方式：</p>
+<table>
+<thead>
+<tr>
+<th>SerializerFeature</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>WriteNullListAsEmpty</td>
+<td>将Collection类型字段的字段空值输出为[]</td>
+</tr>
+<tr>
+<td>WriteNullStringAsEmpty</td>
+<td>将字符串类型字段的空值输出为空字符串 “”</td>
+</tr>
+<tr>
+<td>WriteNullNumberAsZero</td>
+<td>将数值类型字段的空值输出为0</td>
+</tr>
+<tr>
+<td>WriteNullBooleanAsFalse</td>
+<td>将Boolean类型字段的空值输出为false</td>
+</tr>
+</tbody>
+</table>
+<p>具体的示例参考如下，可以同时选择多个：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">class Model &#123;</span><br><span class="line">      public List&lt;Objec&gt; items;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Model obj = ....;</span><br><span class="line"></span><br><span class="line">String text = JSON.toJSONString(obj, SerializerFeature.WriteMapNullValue, SerializerFeature.WriteNullListAsEmpty);</span><br></pre></td></tr></table></figure>
+<h2 id="8-Fastjson-处理日期"><a href="#8-Fastjson-处理日期" class="headerlink" title="8. Fastjson 处理日期"></a>8. Fastjson 处理日期</h2><p>Fastjson 处理日期的API很简单，例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">JSON.toJSONStringWithDateFormat(date, &quot;yyyy-MM-dd HH:mm:ss.SSS&quot;)</span><br></pre></td></tr></table></figure>
+<p>使用ISO-8601日期格式</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">JSON.toJSONString(obj, SerializerFeature.UseISO8601DateFormat);</span><br></pre></td></tr></table></figure>
+<p>全局修改日期格式</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">JSON.DEFFAULT_DATE_FORMAT = &quot;yyyy-MM-dd&quot;;</span><br><span class="line">JSON.toJSONString(obj, SerializerFeature.WriteDateUseDateFormat);</span><br></pre></td></tr></table></figure>
+<p>反序列化能够自动识别如下日期格式：</p>
+<ul>
+<li>ISO-8601日期格式</li>
+<li>yyyy-MM-dd</li>
+<li>yyyy-MM-dd HH:mm:ss</li>
+<li>yyyy-MM-dd HH:mm:ss.SSS</li>
+<li>毫秒数字</li>
+<li>毫秒数字字符串</li>
+<li>.NET JSON日期格式</li>
+<li>new Date(198293238)</li>
+</ul>
+<p>虽然上面处理了单个的日期类型和全局的日期类型格式的配置，但是有时候我们需要的是对象中个别的日期类型差异化，并不一定是同一种格式的。那如何处理呢？接下来介绍 Fastjson 的定制序列化。</p>
+<h2 id="9-Fastjson-定制序列化"><a href="#9-Fastjson-定制序列化" class="headerlink" title="9. Fastjson 定制序列化"></a>9. Fastjson 定制序列化</h2><h3 id="9-1-简介"><a href="#9-1-简介" class="headerlink" title="9.1 简介"></a>9.1 简介</h3><p>fastjson支持多种方式定制序列化。</p>
+<ul>
+<li>通过@JSONField定制序列化</li>
+<li>通过@JSONType定制序列化</li>
+<li>通过SerializeFilter定制序列化</li>
+<li><p>通过ParseProcess定制反序列化</p>
+<h3 id="9-2-使用-JSONField配置"><a href="#9-2-使用-JSONField配置" class="headerlink" title="9.2 使用@JSONField配置"></a>9.2 使用@JSONField配置</h3></li>
+</ul>
+<h4 id="1、JSONField-注解介绍"><a href="#1、JSONField-注解介绍" class="headerlink" title="1、JSONField 注解介绍"></a>1、JSONField 注解介绍</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">package com.alibaba.fastjson.annotation;</span><br><span class="line"></span><br><span class="line">public @interface JSONField &#123;</span><br><span class="line">    // 配置序列化和反序列化的顺序，1.1.42版本之后才支持</span><br><span class="line">    int ordinal() default 0;</span><br><span class="line"></span><br><span class="line">     // 指定字段的名称</span><br><span class="line">    String name() default &quot;&quot;;</span><br><span class="line"></span><br><span class="line">    // 指定字段的格式，对日期格式有用</span><br><span class="line">    String format() default &quot;&quot;;</span><br><span class="line"></span><br><span class="line">    // 是否序列化</span><br><span class="line">    boolean serialize() default true;</span><br><span class="line"></span><br><span class="line">    // 是否反序列化</span><br><span class="line">    boolean deserialize() default true;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="2、JSONField配置方式"><a href="#2、JSONField配置方式" class="headerlink" title="2、JSONField配置方式"></a>2、JSONField配置方式</h4><p>可以把@JSONField配置在字段或者getter/setter方法上，例如：</p>
+<p><strong>配置在字段上</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">public class VO &#123;</span><br><span class="line">     @JSONField(name=&quot;ID&quot;)</span><br><span class="line">     private int id;</span><br><span class="line"></span><br><span class="line">     @JSONField(name=&quot;birthday&quot;,format=&quot;yyyy-MM-dd&quot;)</span><br><span class="line">     public Date date;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>配置在 Getter/Setter 上</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public class VO &#123;</span><br><span class="line">    private int id;</span><br><span class="line"></span><br><span class="line">    @JSONField(name=&quot;ID&quot;)</span><br><span class="line">    public int getId() &#123; return id;&#125;</span><br><span class="line"></span><br><span class="line">    @JSONField(name=&quot;ID&quot;)</span><br><span class="line">    public void setId(int id) &#123;this.id = id;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注意：若属性是私有的，必须有set*方法。否则无法反序列化。</p>
+</blockquote>
+<h4 id="3、使用format配置日期格式化"><a href="#3、使用format配置日期格式化" class="headerlink" title="3、使用format配置日期格式化"></a>3、使用format配置日期格式化</h4><p>可以定制化配置各个日期字段的格式化</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public class A &#123;</span><br><span class="line">     // 配置date序列化和反序列使用yyyyMMdd日期格式</span><br><span class="line">     @JSONField(format=&quot;yyyyMMdd&quot;)</span><br><span class="line">     public Date date;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="4、使用serialize-deserialize指定字段不序列化"><a href="#4、使用serialize-deserialize指定字段不序列化" class="headerlink" title="4、使用serialize/deserialize指定字段不序列化"></a>4、使用serialize/deserialize指定字段不序列化</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public class A &#123;</span><br><span class="line">      @JSONField(serialize=false)</span><br><span class="line">      public Date date;</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line"> public class A &#123;</span><br><span class="line">      @JSONField(deserialize=false)</span><br><span class="line">      public Date date;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<h4 id="5、使用ordinal指定字段的顺序"><a href="#5、使用ordinal指定字段的顺序" class="headerlink" title="5、使用ordinal指定字段的顺序"></a>5、使用ordinal指定字段的顺序</h4><p>缺省Fastjson序列化一个java bean，是根据fieldName的字母序进行序列化的，你可以通过ordinal指定字段的顺序。这个特性需要1.1.42以上版本。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">public static class VO &#123;</span><br><span class="line">    @JSONField(ordinal = 3)</span><br><span class="line">    private int f0;</span><br><span class="line"></span><br><span class="line">    @JSONField(ordinal = 2)</span><br><span class="line">    private int f1;</span><br><span class="line"></span><br><span class="line">    @JSONField(ordinal = 1)</span><br><span class="line">    private int f2;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="6、使用serializeUsing制定属性的序列化类"><a href="#6、使用serializeUsing制定属性的序列化类" class="headerlink" title="6、使用serializeUsing制定属性的序列化类"></a>6、使用serializeUsing制定属性的序列化类</h4><p>在fastjson 1.2.16版本之后，JSONField支持新的定制化配置serializeUsing，可以单独对某一个类的某个属性定制序列化，比如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">public static class Model &#123;</span><br><span class="line">    @JSONField(serializeUsing = ModelValueSerializer.class)</span><br><span class="line">    public int value;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public static class ModelValueSerializer implements ObjectSerializer &#123;</span><br><span class="line">    @Override</span><br><span class="line">    public void write(JSONSerializer serializer, Object object, Object fieldName, Type fieldType,</span><br><span class="line">                      int features) throws IOException &#123;</span><br><span class="line">        Integer value = (Integer) object;</span><br><span class="line">        String text = value + &quot;元&quot;;</span><br><span class="line">        serializer.write(text);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>测试代码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Model model = new Model();</span><br><span class="line">model.value = 100;</span><br><span class="line">String json = JSON.toJSONString(model);</span><br><span class="line">Assert.assertEquals(&quot;&#123;\&quot;value\&quot;:\&quot;100元\&quot;&#125;&quot;, json);</span><br></pre></td></tr></table></figure>
+<h3 id="9-3-使用-JSONType配置"><a href="#9-3-使用-JSONType配置" class="headerlink" title="9.3 使用@JSONType配置"></a>9.3 使用@JSONType配置</h3><p>和JSONField类似，但JSONType配置在类上，而不是field或者getter/setter方法上。</p>
+<h3 id="9-4通过SerializeFilter定制序列化"><a href="#9-4通过SerializeFilter定制序列化" class="headerlink" title="9.4通过SerializeFilter定制序列化"></a>9.4通过SerializeFilter定制序列化</h3><h4 id="1、简介"><a href="#1、简介" class="headerlink" title="1、简介"></a>1、简介</h4><p>SerializeFilter是通过编程扩展的方式定制序列化。fastjson支持6种SerializeFilter，用于不同场景的定制序列化。</p>
+<ul>
+<li>PropertyPreFilter 根据PropertyName判断是否序列化</li>
+<li>PropertyFilter 根据PropertyName和PropertyValue来判断是否序列化</li>
+<li>NameFilter 修改Key，如果需要修改Key,process返回值则可</li>
+<li>ValueFilter 修改Value</li>
+<li>BeforeFilter 序列化时在最前添加内容</li>
+<li>AfterFilter 序列化时在最后添加内容</li>
+</ul>
+<h4 id="2、PropertyFilter-根据PropertyName和PropertyValue来判断是否序列化"><a href="#2、PropertyFilter-根据PropertyName和PropertyValue来判断是否序列化" class="headerlink" title="2、PropertyFilter 根据PropertyName和PropertyValue来判断是否序列化"></a>2、PropertyFilter 根据PropertyName和PropertyValue来判断是否序列化</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public interface PropertyFilter extends SerializeFilter &#123;</span><br><span class="line">   boolean apply(Object object, String propertyName, Object propertyValue);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以通过扩展实现根据object或者属性名称或者属性值进行判断是否需要序列化。例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">PropertyFilter filter = new PropertyFilter() &#123;</span><br><span class="line"></span><br><span class="line">    public boolean apply(Object source, String name, Object value) &#123;</span><br><span class="line">        if (&quot;id&quot;.equals(name)) &#123;</span><br><span class="line">            int id = ((Integer) value).intValue();</span><br><span class="line">            return id &gt;= 100;</span><br><span class="line">        &#125;</span><br><span class="line">        return false;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">JSON.toJSONString(obj, filter); // 序列化的时候传入filter</span><br></pre></td></tr></table></figure>
+<h4 id="3、PropertyPreFilter-根据PropertyName判断是否序列化"><a href="#3、PropertyPreFilter-根据PropertyName判断是否序列化" class="headerlink" title="3、PropertyPreFilter 根据PropertyName判断是否序列化"></a>3、PropertyPreFilter 根据PropertyName判断是否序列化</h4><p>和PropertyFilter不同只根据object和name进行判断，在调用getter之前，这样避免了getter调用可能存在的异常。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public interface PropertyPreFilter extends SerializeFilter &#123;</span><br><span class="line">     boolean apply(JSONSerializer serializer, Object object, String name);</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<h4 id="4、NameFilter-序列化时修改Key"><a href="#4、NameFilter-序列化时修改Key" class="headerlink" title="4、NameFilter 序列化时修改Key"></a>4、NameFilter 序列化时修改Key</h4><p>如果需要修改Key,process返回值则可</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public interface NameFilter extends SerializeFilter &#123;</span><br><span class="line">    String process(Object object, String propertyName, Object propertyValue);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>fastjson内置一个PascalNameFilter，用于输出将首字符大写的Pascal风格。 例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">import com.alibaba.fastjson.serializer.PascalNameFilter;</span><br><span class="line"></span><br><span class="line">Object obj = ...;</span><br><span class="line">String jsonStr = JSON.toJSONString(obj, new PascalNameFilter());</span><br></pre></td></tr></table></figure>
+<h4 id="5、ValueFilter-序列化时修改Value"><a href="#5、ValueFilter-序列化时修改Value" class="headerlink" title="5、ValueFilter 序列化时修改Value"></a>5、ValueFilter 序列化时修改Value</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public interface ValueFilter extends SerializeFilter &#123;</span><br><span class="line">  Object process(Object object, String propertyName, Object propertyValue);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="6、BeforeFilter-序列化时在最前添加内容"><a href="#6、BeforeFilter-序列化时在最前添加内容" class="headerlink" title="6、BeforeFilter 序列化时在最前添加内容"></a>6、BeforeFilter 序列化时在最前添加内容</h4><p>在序列化对象的所有属性之前执行某些操作，例如调用 writeKeyValue 添加内容</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public abstract class BeforeFilter implements SerializeFilter &#123;</span><br><span class="line">   protected final void writeKeyValue(String key, Object value) &#123; ... &#125;</span><br><span class="line">    // 需要实现的抽象方法，在实现中调用writeKeyValue添加内容</span><br><span class="line">    public abstract void writeBefore(Object object);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="7、AfterFilter-序列化时在最后添加内容"><a href="#7、AfterFilter-序列化时在最后添加内容" class="headerlink" title="7、AfterFilter 序列化时在最后添加内容"></a>7、AfterFilter 序列化时在最后添加内容</h4><p>在序列化对象的所有属性之后执行某些操作，例如调用 writeKeyValue 添加内容</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"> public abstract class AfterFilter implements SerializeFilter &#123;</span><br><span class="line">  protected final void writeKeyValue(String key, Object value) &#123; ... &#125;</span><br><span class="line">    // 需要实现的抽象方法，在实现中调用writeKeyValue添加内容</span><br><span class="line">    public abstract void writeAfter(Object object);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="9-5-通过ParseProcess定制反序列化"><a href="#9-5-通过ParseProcess定制反序列化" class="headerlink" title="9.5 通过ParseProcess定制反序列化"></a>9.5 通过ParseProcess定制反序列化</h3><h4 id="1、简介-1"><a href="#1、简介-1" class="headerlink" title="1、简介"></a>1、简介</h4><p>ParseProcess是编程扩展定制反序列化的接口。fastjson支持如下ParseProcess：</p>
+<ul>
+<li>ExtraProcessor 用于处理多余的字段</li>
+<li>ExtraTypeProvider 用于处理多余字段时提供类型信息</li>
+</ul>
+<h4 id="2、使用ExtraProcessor-处理多余字段"><a href="#2、使用ExtraProcessor-处理多余字段" class="headerlink" title="2、使用ExtraProcessor 处理多余字段"></a>2、使用ExtraProcessor 处理多余字段</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">public static class VO &#123;</span><br><span class="line">    private int id;</span><br><span class="line">    private Map&lt;String, Object&gt; attributes = new HashMap&lt;String, Object&gt;();</span><br><span class="line">    public int getId() &#123; return id; &#125;</span><br><span class="line">    public void setId(int id) &#123; this.id = id;&#125;</span><br><span class="line">    public Map&lt;String, Object&gt; getAttributes() &#123; return attributes;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">ExtraProcessor processor = new ExtraProcessor() &#123;</span><br><span class="line">    public void processExtra(Object object, String key, Object value) &#123;</span><br><span class="line">        VO vo = (VO) object;</span><br><span class="line">        vo.getAttributes().put(key, value);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">VO vo = JSON.parseObject(&quot;&#123;\&quot;id\&quot;:123,\&quot;name\&quot;:\&quot;abc\&quot;&#125;&quot;, VO.class, processor);</span><br><span class="line">Assert.assertEquals(123, vo.getId());</span><br><span class="line">Assert.assertEquals(&quot;abc&quot;, vo.getAttributes().get(&quot;name&quot;));</span><br></pre></td></tr></table></figure>
+<h4 id="3、使用ExtraTypeProvider-为多余的字段提供类型"><a href="#3、使用ExtraTypeProvider-为多余的字段提供类型" class="headerlink" title="3、使用ExtraTypeProvider 为多余的字段提供类型"></a>3、使用ExtraTypeProvider 为多余的字段提供类型</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">public static class VO &#123;</span><br><span class="line">    private int id;</span><br><span class="line">    private Map&lt;String, Object&gt; attributes = new HashMap&lt;String, Object&gt;();</span><br><span class="line">    public int getId() &#123; return id; &#125;</span><br><span class="line">    public void setId(int id) &#123; this.id = id;&#125;</span><br><span class="line">    public Map&lt;String, Object&gt; getAttributes() &#123; return attributes;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class MyExtraProcessor implements ExtraProcessor, ExtraTypeProvider &#123;</span><br><span class="line">    public void processExtra(Object object, String key, Object value) &#123;</span><br><span class="line">        VO vo = (VO) object;</span><br><span class="line">        vo.getAttributes().put(key, value);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public Type getExtraType(Object object, String key) &#123;</span><br><span class="line">        if (&quot;value&quot;.equals(key)) &#123;</span><br><span class="line">            return int.class;</span><br><span class="line">        &#125;</span><br><span class="line">        return null;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line">ExtraProcessor processor = new MyExtraProcessor();</span><br><span class="line"></span><br><span class="line">VO vo = JSON.parseObject(&quot;&#123;\&quot;id\&quot;:123,\&quot;value\&quot;:\&quot;123456\&quot;&#125;&quot;, VO.class, processor);</span><br><span class="line">Assert.assertEquals(123, vo.getId());</span><br><span class="line">Assert.assertEquals(123456, vo.getAttributes().get(&quot;value&quot;)); // value本应该是字符串类型的，通过getExtraType的处理变成Integer类型了。</span><br></pre></td></tr></table></figure>
+<h2 id="10-在-Spring-MVC-中集成-Fastjson"><a href="#10-在-Spring-MVC-中集成-Fastjson" class="headerlink" title="10. 在 Spring MVC 中集成 Fastjson"></a>10. 在 Spring MVC 中集成 Fastjson</h2><p>如果你使用 Spring MVC 来构建 Web 应用并对性能有较高的要求的话，可以使用 Fastjson 提供的FastJsonHttpMessageConverter 来替换 Spring MVC 默认的 HttpMessageConverter 以提高 @RestController @ResponseBody @RequestBody 注解的 JSON序列化速度。下面是配置方式，非常简单。</p>
+<p><strong>XML式</strong><br>如果是使用 XML 的方式配置 Spring MVC 的话，只需在 Spring MVC 的 XML 配置文件中加入下面配置即可</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;mvc:annotation-driven&gt;</span><br><span class="line">    &lt;mvc:message-converters&gt;</span><br><span class="line">        &lt;bean class=&quot;com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter&quot;/&gt;      </span><br><span class="line">    &lt;/mvc:message-converters&gt;</span><br><span class="line">&lt;/mvc:annotation-driven&gt;</span><br></pre></td></tr></table></figure>
+<p>通常默认配置已经可以满足大部分使用场景，如果你想对它进行自定义配置的话，你可以添加 FastJsonConfig Bean。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&lt;mvc:annotation-driven&gt;</span><br><span class="line">    &lt;mvc:message-converters&gt;</span><br><span class="line">        &lt;bean class=&quot;com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter&quot;&gt;</span><br><span class="line">            &lt;property name=&quot;fastJsonConfig&quot; ref=&quot;fastJsonConfig&quot;/&gt;</span><br><span class="line">        &lt;/bean&gt;</span><br><span class="line">    &lt;/mvc:message-converters&gt;</span><br><span class="line">&lt;/mvc:annotation-driven&gt;</span><br><span class="line"></span><br><span class="line">&lt;bean id=&quot;fastJsonConfig&quot; class=&quot;com.alibaba.fastjson.support.config.FastJsonConfig&quot;&gt;</span><br><span class="line">    &lt;!--   自定义配置...   --&gt;</span><br><span class="line">&lt;/bean&gt;</span><br></pre></td></tr></table></figure>
+<p><strong>编程式</strong><br>如果是使用编程的方式（通常是基于 Spring Boot 项目）配置 Spring MVC 的话只需继承 <code>WebMvcConfigurerAdapter</code>覆写<code>configureMessageConverters</code>方法即可，就像下面这样。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">@Configuration</span><br><span class="line">public class WebMvcConfigurer extends WebMvcConfigurerAdapter &#123;</span><br><span class="line">    @Override</span><br><span class="line">    public void configureMessageConverters(List&lt;HttpMessageConverter&lt;?&gt;&gt; converters) &#123;</span><br><span class="line">        FastJsonHttpMessageConverter converter = new FastJsonHttpMessageConverter();</span><br><span class="line">        //自定义配置...</span><br><span class="line">        //FastJsonConfig config = new FastJsonConfig();</span><br><span class="line">        //config.set ...</span><br><span class="line">        //converter.setFastJsonConfig(config);</span><br><span class="line">        converters.add(0, converter);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><strong>注意</strong>：<br><strong>1、</strong>如果你使用的 Fastjson 版本小于1.2.36的话(强烈建议使用最新版本)，在与Spring MVC 4.X 版本集成时需使用 FastJsonHttpMessageConverter4。</p>
+<p><strong>2、</strong>SpringBoot 2.0.1版本中加载WebMvcConfigurer的顺序发生了变动，故需使用converters.add(0, converter);指定FastJsonHttpMessageConverter在converters内的顺序，否则在SpringBoot 2.0.1及之后的版本中将优先使用Jackson处理。</p>
+</blockquote>
+<h2 id="11-在-Spring-Data-Redis-中集成-Fastjson"><a href="#11-在-Spring-Data-Redis-中集成-Fastjson" class="headerlink" title="11. 在 Spring Data Redis 中集成 Fastjson"></a>11. 在 Spring Data Redis 中集成 Fastjson</h2><p>通常我们在 Spring 中使用 Redis 是通过 Spring Data Redis 提供的 RedisTemplate 来进行的，如果你准备使用 JSON 作为对象序列/反序列化的方式并对序列化速度有较高的要求的话，建议使用 Fastjson 提供的 <code>GenericFastJsonRedisSerializer</code> 或 <code>FastJsonRedisSerializer</code> 作为 RedisTemplate 的 RedisSerializer。下面是配置方式，非常简单。</p>
+<p><strong>XML式</strong><br>如果是使用 XML 的方式配置 Spring Data Redis 的话，只需将 RedisTemplate 中的 Serializer 替换为 GenericFastJsonRedisSerializer 即可。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;bean id=&quot;redisTemplate&quot; class=&quot;org.springframework.data.redis.core.RedisTemplate&quot;&gt;</span><br><span class="line">    &lt;property name=&quot;connectionFactory&quot; ref=&quot;jedisConnectionFactory&quot;/&gt;</span><br><span class="line">    &lt;property name=&quot;defaultSerializer&quot;&gt;</span><br><span class="line">        &lt;bean class=&quot;com.alibaba.fastjson.support.spring.GenericFastJsonRedisSerializer&quot;/&gt;</span><br><span class="line">    &lt;/property&gt;</span><br><span class="line">&lt;/bean&gt;</span><br></pre></td></tr></table></figure>
+<p>下面是完整的 Spring 集成 Redis 配置供参考。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- Redis 连接池配置(可选) --&gt;</span><br><span class="line">&lt;bean id=&quot;jedisPoolConfig&quot; class=&quot;redis.clients.jedis.JedisPoolConfig&quot;&gt;</span><br><span class="line">    &lt;property name=&quot;maxTotal&quot; value=&quot;$&#123;redis.pool.maxActive&#125;&quot;/&gt;</span><br><span class="line">    &lt;property name=&quot;maxIdle&quot; value=&quot;$&#123;redis.pool.maxIdle&#125;&quot;/&gt;</span><br><span class="line">    &lt;property name=&quot;maxWaitMillis&quot; value=&quot;$&#123;redis.pool.maxWait&#125;&quot;/&gt;</span><br><span class="line">    &lt;property name=&quot;testOnBorrow&quot; value=&quot;$&#123;redis.pool.testOnBorrow&#125;&quot;/&gt;</span><br><span class="line">     &lt;!-- 更多连接池配置...--&gt;</span><br><span class="line">&lt;/bean&gt;</span><br><span class="line">&lt;!-- Redis 连接工厂配置 --&gt;</span><br><span class="line">&lt;bean id=&quot;jedisConnectionFactory&quot; class=&quot;org.springframework.data.redis.connection.jedis.JedisConnectionFactory&quot;&gt;</span><br><span class="line">    &lt;!--设置连接池配置，不设置的话会使用默认的连接池配置，若想禁用连接池可设置 usePool = false --&gt;   </span><br><span class="line">    &lt;property name=&quot;poolConfig&quot; ref=&quot;jedisPoolConfig&quot; /&gt;  </span><br><span class="line">    &lt;property name=&quot;hostName&quot; value=&quot;$&#123;host&#125;&quot;/&gt;</span><br><span class="line">    &lt;property name=&quot;port&quot; value=&quot;$&#123;port&#125;&quot;/&gt;</span><br><span class="line">    &lt;property name=&quot;password&quot; value=&quot;$&#123;password&#125;&quot;/&gt;</span><br><span class="line">    &lt;property name=&quot;database&quot; value=&quot;$&#123;database&#125;&quot;/&gt;</span><br><span class="line">    &lt;!-- 更多连接工厂配置...--&gt;</span><br><span class="line">&lt;/bean&gt;</span><br><span class="line">&lt;!-- RedisTemplate 配置 --&gt;</span><br><span class="line">&lt;bean id=&quot;redisTemplate&quot; class=&quot;org.springframework.data.redis.core.RedisTemplate&quot;&gt;</span><br><span class="line">    &lt;!-- 设置 Redis 连接工厂--&gt;</span><br><span class="line">    &lt;property name=&quot;connectionFactory&quot; ref=&quot;jedisConnectionFactory&quot;/&gt;</span><br><span class="line">    &lt;!-- 设置默认 Serializer ，包含 keySerializer &amp; valueSerializer --&gt;</span><br><span class="line">    &lt;property name=&quot;defaultSerializer&quot;&gt;</span><br><span class="line">        &lt;bean class=&quot;com.alibaba.fastjson.support.spring.GenericFastJsonRedisSerializer&quot;/&gt;</span><br><span class="line">    &lt;/property&gt;</span><br><span class="line">    &lt;!-- 单独设置 keySerializer --&gt;</span><br><span class="line">    &lt;property name=&quot;keySerializer&quot;&gt;</span><br><span class="line">        &lt;bean class=&quot;com.alibaba.fastjson.support.spring.GenericFastJsonRedisSerializer&quot;/&gt;</span><br><span class="line">    &lt;/property&gt;</span><br><span class="line">    &lt;!-- 单独设置 valueSerializer --&gt;</span><br><span class="line">    &lt;property name=&quot;valueSerializer&quot;&gt;</span><br><span class="line">        &lt;bean class=&quot;com.alibaba.fastjson.support.spring.GenericFastJsonRedisSerializer&quot;/&gt;</span><br><span class="line">    &lt;/property&gt;</span><br><span class="line">&lt;/bean&gt;</span><br></pre></td></tr></table></figure>
+<p><strong>编程式</strong></p>
+<p>如果是使用编程的方式（通常是基于 Spring Boot 项目）配置 RedisTemplate 的话只需在你的配置类(被@Configuration注解修饰的类)中显式创建 RedisTemplate Bean，设置 Serializer 即可。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">@Bean</span><br><span class="line">public RedisTemplate redisTemplate(RedisConnectionFactory redisConnectionFactory) &#123;</span><br><span class="line">    RedisTemplate redisTemplate = new RedisTemplate();</span><br><span class="line">    redisTemplate.setConnectionFactory(redisConnectionFactory);</span><br><span class="line"></span><br><span class="line">    GenericFastJsonRedisSerializer fastJsonRedisSerializer = new GenericFastJsonRedisSerializer();</span><br><span class="line">    redisTemplate.setDefaultSerializer(fastJsonRedisSerializer);//设置默认的Serialize，包含 keySerializer &amp; valueSerializer</span><br><span class="line"></span><br><span class="line">    //redisTemplate.setKeySerializer(fastJsonRedisSerializer);//单独设置keySerializer</span><br><span class="line">    //redisTemplate.setValueSerializer(fastJsonRedisSerializer);//单独设置valueSerializer</span><br><span class="line">    return redisTemplate;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通常使用 <code>GenericFastJsonRedisSerializer</code> 即可满足大部分场景，如果你想定义特定类型专用的 RedisTemplate 可以使用 <code>FastJsonRedisSerializer</code>来代替 <code>GenericFastJsonRedisSerializer</code>，配置是类似的。</p>
+<p>参考：<a href="https://github.com/alibaba/fastjson/wiki" target="_blank" rel="noopener">https://github.com/alibaba/fastjson/wiki</a><br><a href="https://www.cnblogs.com/jajian/p/10051901.html" target="_blank" rel="noopener">https://www.cnblogs.com/jajian/p/10051901.html</a></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/05/23/MyBatis/MyBatis中#和$的区别/" rel="next" title="MyBatis中#和$的区别">
+                <i class="fa fa-chevron-left"></i> MyBatis中#和$的区别
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/07/21/Lombok/Lombok常用注解/" rel="prev" title="Lombok常用注解">
+                Lombok常用注解 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="gitalk-container">
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Zong</p>
+              <div class="site-description motion-element" itemprop="description"></div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">166</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                      <a href="/categories/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">31</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/zkzong" title="GitHub &rarr; https://github.com/zkzong" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-什么是-Fastjson"><span class="nav-number">1.</span> <span class="nav-text">1. 什么是 Fastjson?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Fastjson-的优点"><span class="nav-number">2.</span> <span class="nav-text">2. Fastjson 的优点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-怎么获得-Fastjson"><span class="nav-number">3.</span> <span class="nav-text">3. 怎么获得 Fastjson</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-Fastjson-主要的API"><span class="nav-number">4.</span> <span class="nav-text">4. Fastjson 主要的API</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-Fastjson-的性能"><span class="nav-number">5.</span> <span class="nav-text">5. Fastjson 的性能</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-Fastjson-使用示例"><span class="nav-number">6.</span> <span class="nav-text">6. Fastjson 使用示例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-将对象中的空值输出"><span class="nav-number">7.</span> <span class="nav-text">7. 将对象中的空值输出</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-Fastjson-处理日期"><span class="nav-number">8.</span> <span class="nav-text">8. Fastjson 处理日期</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-Fastjson-定制序列化"><span class="nav-number">9.</span> <span class="nav-text">9. Fastjson 定制序列化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#9-1-简介"><span class="nav-number">9.1.</span> <span class="nav-text">9.1 简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-2-使用-JSONField配置"><span class="nav-number">9.2.</span> <span class="nav-text">9.2 使用@JSONField配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1、JSONField-注解介绍"><span class="nav-number">9.2.1.</span> <span class="nav-text">1、JSONField 注解介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2、JSONField配置方式"><span class="nav-number">9.2.2.</span> <span class="nav-text">2、JSONField配置方式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3、使用format配置日期格式化"><span class="nav-number">9.2.3.</span> <span class="nav-text">3、使用format配置日期格式化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4、使用serialize-deserialize指定字段不序列化"><span class="nav-number">9.2.4.</span> <span class="nav-text">4、使用serialize/deserialize指定字段不序列化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5、使用ordinal指定字段的顺序"><span class="nav-number">9.2.5.</span> <span class="nav-text">5、使用ordinal指定字段的顺序</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6、使用serializeUsing制定属性的序列化类"><span class="nav-number">9.2.6.</span> <span class="nav-text">6、使用serializeUsing制定属性的序列化类</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-3-使用-JSONType配置"><span class="nav-number">9.3.</span> <span class="nav-text">9.3 使用@JSONType配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-4通过SerializeFilter定制序列化"><span class="nav-number">9.4.</span> <span class="nav-text">9.4通过SerializeFilter定制序列化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1、简介"><span class="nav-number">9.4.1.</span> <span class="nav-text">1、简介</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2、PropertyFilter-根据PropertyName和PropertyValue来判断是否序列化"><span class="nav-number">9.4.2.</span> <span class="nav-text">2、PropertyFilter 根据PropertyName和PropertyValue来判断是否序列化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3、PropertyPreFilter-根据PropertyName判断是否序列化"><span class="nav-number">9.4.3.</span> <span class="nav-text">3、PropertyPreFilter 根据PropertyName判断是否序列化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4、NameFilter-序列化时修改Key"><span class="nav-number">9.4.4.</span> <span class="nav-text">4、NameFilter 序列化时修改Key</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5、ValueFilter-序列化时修改Value"><span class="nav-number">9.4.5.</span> <span class="nav-text">5、ValueFilter 序列化时修改Value</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6、BeforeFilter-序列化时在最前添加内容"><span class="nav-number">9.4.6.</span> <span class="nav-text">6、BeforeFilter 序列化时在最前添加内容</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#7、AfterFilter-序列化时在最后添加内容"><span class="nav-number">9.4.7.</span> <span class="nav-text">7、AfterFilter 序列化时在最后添加内容</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-5-通过ParseProcess定制反序列化"><span class="nav-number">9.5.</span> <span class="nav-text">9.5 通过ParseProcess定制反序列化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1、简介-1"><span class="nav-number">9.5.1.</span> <span class="nav-text">1、简介</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2、使用ExtraProcessor-处理多余字段"><span class="nav-number">9.5.2.</span> <span class="nav-text">2、使用ExtraProcessor 处理多余字段</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3、使用ExtraTypeProvider-为多余的字段提供类型"><span class="nav-number">9.5.3.</span> <span class="nav-text">3、使用ExtraTypeProvider 为多余的字段提供类型</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-在-Spring-MVC-中集成-Fastjson"><span class="nav-number">10.</span> <span class="nav-text">10. 在 Spring MVC 中集成 Fastjson</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#11-在-Spring-Data-Redis-中集成-Fastjson"><span class="nav-number">11.</span> <span class="nav-text">11. 在 Spring Data Redis 中集成 Fastjson</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Zong</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.0"></script>
+
+  <script src="/js/motion.js?v=7.1.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.1.0"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.1.0"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.0"></script>
+<script src="/js/post-details.js?v=7.1.0"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.0"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+    
+
+<script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+
+
+<script src="//cdn.jsdelivr.net/npm/js-md5@0.7.3/src/md5.min.js"></script>
+
+<script>
+  var gitalk = new Gitalk({
+    clientID: '73066bdec38692537c94',
+    clientSecret: 'b1e5d41ba29fae3ae6eaae2b7920971f33730a9f',
+    repo: 'zkzong.github.io',
+    owner: 'zkzong',
+    admin: ['zkzong'],
+    id: md5(location.pathname),
+    
+      language: window.navigator.language || window.navigator.userLanguage,
+    
+    distractionFreeMode: 'true'
+  });
+  gitalk.render('gitalk-container');
+</script>
+
+  
+
+
+  
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+  
+  <script>
+    
+    function addCount(Counter) {
+      var $visitors = $('.leancloud_visitors');
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+
+      Counter('get', '/classes/Counter', { where: JSON.stringify({ url }) })
+        .done(function({ results }) {
+          if (results.length > 0) {
+            var counter = results[0];
+            
+            Counter('put', '/classes/Counter/' + counter.objectId, JSON.stringify({ time: { '__op': 'Increment', 'amount': 1 } }))
+            
+              .done(function() {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.time + 1);
+              })
+            
+              .fail(function ({ responseJSON }) {
+                console.log('Failed to save Visitor num, with error message: ' + responseJSON.error);
+              })
+          } else {
+            
+              Counter('post', '/classes/Counter', JSON.stringify({ title: title, url: url, time: 1 }))
+                .done(function() {
+                  var $element = $(document.getElementById(url));
+                  $element.find('.leancloud-visitors-count').text(1);
+                })
+                .fail(function() {
+                  console.log('Failed to create');
+                });
+            
+          }
+        })
+        .fail(function ({ responseJSON }) {
+          console.log('LeanCloud Counter Error: ' + responseJSON.code + ' ' + responseJSON.error);
+        });
+    }
+    
+
+    $(function() {
+      $.get('https://app-router.leancloud.cn/2/route?appId=' + 'UWPKKSPkFHL2NjJhMNAROaVk-gzGzoHsz')
+        .done(function({ api_server }) {
+          var Counter = function(method, url, data) {
+            return $.ajax({
+              method: method,
+              url: 'https://' + api_server + '/1.1' + url,
+              headers: {
+                'X-LC-Id': 'UWPKKSPkFHL2NjJhMNAROaVk-gzGzoHsz',
+                'X-LC-Key': 'mE5iLOQA7IQtQusstI82ahjV',
+                'Content-Type': 'application/json',
+              },
+              data: data
+            });
+          };
+          
+            addCount(Counter);
+          
+        });
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

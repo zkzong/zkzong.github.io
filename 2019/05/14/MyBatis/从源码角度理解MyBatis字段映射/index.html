@@ -1,0 +1,1457 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="MyBatis在转换查询结果到需要的Java业务对象时做了三件事：  解决了数据库列名到Java列名的映射。 解决了数据库类型到Java类型的转换工作。 在转换过程中具备一定的容错能力。  其实核心就是：  数据库中的列名怎么和对象中的字段对应起来。 数据库中的列的类型怎么转换到合适的Java类型，不引起转换失败。  我们先来看第一点，数据库中的列名怎么和对象中的字段对应起来。首先是PO(Pers">
+<meta property="og:type" content="article">
+<meta property="og:title" content="从源码角度理解MyBatis字段映射">
+<meta property="og:url" content="http://yoursite.com/2019/05/14/MyBatis/从源码角度理解MyBatis字段映射/index.html">
+<meta property="og:site_name" content="Zong&#39;s Blog">
+<meta property="og:description" content="MyBatis在转换查询结果到需要的Java业务对象时做了三件事：  解决了数据库列名到Java列名的映射。 解决了数据库类型到Java类型的转换工作。 在转换过程中具备一定的容错能力。  其实核心就是：  数据库中的列名怎么和对象中的字段对应起来。 数据库中的列的类型怎么转换到合适的Java类型，不引起转换失败。  我们先来看第一点，数据库中的列名怎么和对象中的字段对应起来。首先是PO(Pers">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/292448-5e3ffa7836f72460.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/292448-73956168a0b02a6e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/292448-2ccc0ef42b243d04.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/292448-9271873a13994420.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2022-01-06T13:21:26.300Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="从源码角度理解MyBatis字段映射">
+<meta name="twitter:description" content="MyBatis在转换查询结果到需要的Java业务对象时做了三件事：  解决了数据库列名到Java列名的映射。 解决了数据库类型到Java类型的转换工作。 在转换过程中具备一定的容错能力。  其实核心就是：  数据库中的列名怎么和对象中的字段对应起来。 数据库中的列的类型怎么转换到合适的Java类型，不引起转换失败。  我们先来看第一点，数据库中的列名怎么和对象中的字段对应起来。首先是PO(Pers">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/292448-5e3ffa7836f72460.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://yoursite.com/2019/05/14/MyBatis/从源码角度理解MyBatis字段映射/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>从源码角度理解MyBatis字段映射 | Zong's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Zong's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">技术博客</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/05/14/MyBatis/从源码角度理解MyBatis字段映射/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Zong">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Zong's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">从源码角度理解MyBatis字段映射
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-05-14 00:00:00" itemprop="dateCreated datePublished" datetime="2019-05-14T00:00:00+08:00">2019-05-14</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2022-01-06 21:21:26" itemprop="dateModified" datetime="2022-01-06T21:21:26+08:00">2022-01-06</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/MyBatis/" itemprop="url" rel="index"><span itemprop="name">MyBatis</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+            <span id="/2019/05/14/MyBatis/从源码角度理解MyBatis字段映射/" class="leancloud_visitors" data-flag-title="从源码角度理解MyBatis字段映射">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读次数：</span>
+              
+                <span class="leancloud-visitors-count"></span>
+            </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>MyBatis在转换查询结果到需要的Java业务对象时做了三件事：</p>
+<ol>
+<li>解决了数据库列名到Java列名的映射。</li>
+<li>解决了数据库类型到Java类型的转换工作。</li>
+<li>在转换过程中具备一定的容错能力。</li>
+</ol>
+<p>其实核心就是：</p>
+<ol>
+<li>数据库中的列名怎么和对象中的字段对应起来。</li>
+<li>数据库中的列的类型怎么转换到合适的Java类型，不引起转换失败。</li>
+</ol>
+<p>我们先来看第一点，数据库中的列名怎么和对象中的字段对应起来。首先是PO(Persistant Object) CityPO里面有五个字段：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CityPO</span> </span>&#123;</span><br><span class="line">    Integer id;</span><br><span class="line">    Long cityId;</span><br><span class="line">    String cityName;</span><br><span class="line">    String cityEnName;</span><br><span class="line">    String cityPyName;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>本次要查询的数据库中的列名如下所示:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; mysql&gt; desc SU_City;</span><br><span class="line">+--------------+-------------+------+-----+-------------------+-----------------------------+</span><br><span class="line">| Field        | Type        | Null | Key | Default           | Extra                       |</span><br><span class="line">+--------------+-------------+------+-----+-------------------+-----------------------------+</span><br><span class="line">| id           | int(11)     | NO   | PRI | NULL              | auto_increment              |</span><br><span class="line">| city_id      | int(11)     | NO   | UNI | NULL              |                             |</span><br><span class="line">| city_name    | varchar(20) | NO   |     |                   |                             |</span><br><span class="line">| city_en_name | varchar(20) | NO   |     |                   |                             |</span><br><span class="line">| city_py_name | varchar(50) | NO   |     |                   |                             |</span><br><span class="line">| create_time  | datetime    | NO   |     | CURRENT_TIMESTAMP |                             |</span><br><span class="line">| updatetime   | datetime    | NO   | MUL | CURRENT_TIMESTAMP | on update CURRENT_TIMESTAMP |</span><br><span class="line">+--------------+-------------+------+-----+-------------------+-----------------------------+</span><br><span class="line">7 rows in set (0.01 sec)</span><br></pre></td></tr></table></figure></p>
+<p>我们是按照驼峰式命名，把数据库中的列名对应到了对象的字段名。如下是MyBatis的接口类和映射文件。<br>接口类：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">CityMapper</span> </span>&#123;</span><br><span class="line">    <span class="function">CityPO <span class="title">selectCity</span><span class="params">(<span class="keyword">int</span> id)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>映射文件：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="UTF-8" ?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE mapper</span></span><br><span class="line"><span class="meta">        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"</span></span><br><span class="line"><span class="meta">        "http://mybatis.org/dtd/mybatis-3-mapper.dtd"&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">mapper</span> <span class="attr">namespace</span>=<span class="string">"mapper.CityMapper"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">"selectCity"</span> <span class="attr">resultType</span>=<span class="string">"po.CityPO"</span>&gt;</span></span><br><span class="line">        select id,city_id,city_name,city_en_name from SU_City where id = #&#123;id&#125;</span><br><span class="line">    <span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mapper</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>在上面的映射文件中，namespace指定了这个接口类的全限定类名，紧随其后的select代表是select语句，id是接口类中函数的名字，resultType代表了从这条语句中返回的期望类型的类的完全限定名或别名，在此例子中是我们的业务对象CityPO的类路径。</p>
+<p>主要有三种方案：</p>
+<ol>
+<li>驼峰式命名开关，或者不开——数据库列和字段名全一致。</li>
+<li>Select时指定AS。</li>
+<li>resultMap 最稳健。</li>
+</ol>
+<h2 id="1-驼峰命名开关"><a href="#1-驼峰命名开关" class="headerlink" title="1. 驼峰命名开关"></a>1. 驼峰命名开关</h2><p>因为CityPO的列名是完全根据数据库列名驼峰式命名后得到的，因此MyBatis提供了一个配置项。开启开配置项后，在匹配时，能够根据数据库列名找到对应对应的驼峰式命名后的字段。<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">settings</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 开启驼峰，开启后，只要数据库字段和对象属性名字母相同，无论中间加多少下划线都可以识别 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">setting</span> <span class="attr">name</span>=<span class="string">"mapUnderscoreToCamelCase"</span> <span class="attr">value</span>=<span class="string">"true"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">settings</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>从源码角度解读一下，MyBatis处理ResultSet的映射默认都在DefaultResultSetHandler中完成。</p>
+<p>处理行数据的源码主要在下面的函数里进行，由于我们在映射文件中没有定义额外的ResultMap，因此会直接进入else分支的代码。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleRowValues</span><span class="params">(ResultSetWrapper rsw, ResultMap resultMap, ResultHandler&lt;?&gt; resultHandler, RowBounds rowBounds, ResultMapping parentMapping)</span> <span class="keyword">throws</span> SQLException </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (resultMap.hasNestedResultMaps()) &#123;</span><br><span class="line">        ensureNoRowBounds();</span><br><span class="line">        checkResultHandler();</span><br><span class="line">        handleRowValuesForNestedResultMap(rsw, resultMap, resultHandler, rowBounds, parentMapping);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        handleRowValuesForSimpleResultMap(rsw, resultMap, resultHandler, rowBounds, parentMapping);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>进入handleRowValuesForSimpleResultMap中，主要处理函数如下，在这里完成了对象的生成及赋值。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Object rowValue = getRowValue(rsw, discriminatedResultMap);</span><br></pre></td></tr></table></figure></p>
+<p> 在这里先创建了对象的实例，然后获取了对象的元信息，为反射赋值做准备。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> Object <span class="title">getRowValue</span><span class="params">(ResultSetWrapper rsw, ResultMap resultMap)</span> <span class="keyword">throws</span> SQLException </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> ResultLoaderMap lazyLoader = <span class="keyword">new</span> ResultLoaderMap();</span><br><span class="line">    Object rowValue = createResultObject(rsw, resultMap, lazyLoader, <span class="keyword">null</span>);</span><br><span class="line">    <span class="keyword">if</span> (rowValue != <span class="keyword">null</span> &amp;&amp; !hasTypeHandlerForResultObject(rsw, resultMap.getType())) &#123;</span><br><span class="line">        <span class="keyword">final</span> MetaObject metaObject = configuration.newMetaObject(rowValue);</span><br><span class="line">        <span class="keyword">boolean</span> foundValues = <span class="keyword">this</span>.useConstructorMappings;</span><br><span class="line">        <span class="keyword">if</span> (shouldApplyAutomaticMappings(resultMap, <span class="keyword">false</span>)) &#123;</span><br><span class="line">            foundValues = applyAutomaticMappings(rsw, resultMap, metaObject, <span class="keyword">null</span>) || foundValues;</span><br><span class="line">        &#125;</span><br><span class="line">        foundValues = applyPropertyMappings(rsw, resultMap, metaObject, lazyLoader, <span class="keyword">null</span>) || foundValues;</span><br><span class="line">        foundValues = lazyLoader.size() &gt; <span class="number">0</span> || foundValues;</span><br><span class="line">        rowValue = (foundValues || configuration.isReturnInstanceForEmptyRow()) ? rowValue : <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> rowValue;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>在applyAutomaticMappings完成了整个过程，我们进去探一探。</p>
+<p>就是下面这个函数创建好了映射关系，这个函数的下半部分是完成赋值的，映射的部分下次会详细分析。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">List&lt;UnMappedColumnAutoMapping&gt; autoMapping = createAutomaticMappings(rsw, resultMap, metaObject, columnPrefix);</span><br></pre></td></tr></table></figure>
+<p>在这个方法里，上半部分是生成了数据库的列名，在这个函数中找到了对应的字段名。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> String property = metaObject.findProperty(propertyName, configuration.isMapUnderscoreToCamelCase());</span><br></pre></td></tr></table></figure>
+<p>我们进去看一看，它传进了生成好的数据库列名，传进了前面提到的是否根据驼峰式命名映射开关的值。</p>
+<p>事实证明，真的很简单，往下看，就是把下划线都去了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">findProperty</span><span class="params">(String name, <span class="keyword">boolean</span> useCamelCaseMapping)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (useCamelCaseMapping) &#123;</span><br><span class="line">        name = name.replace(<span class="string">"_"</span>, <span class="string">""</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> findProperty(name);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>隐隐觉得是不是大小写不敏感啊，继续往下看，这里返回找到的字段名。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> StringBuilder <span class="title">buildProperty</span><span class="params">(String name, StringBuilder builder)</span> </span>&#123;</span><br><span class="line">    ......</span><br><span class="line">    String propertyName = reflector.findPropertyName(name);</span><br><span class="line">    <span class="keyword">if</span> (propertyName != <span class="keyword">null</span>) &#123;</span><br><span class="line">        builder.append(propertyName);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> builder;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> 好了，真相大白，就是大小写不敏感的。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">findPropertyName</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> caseInsensitivePropertyMap.get(name.toUpperCase(Locale.ENGLISH));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="http://upload-images.jianshu.io/upload_images/292448-5e3ffa7836f72460.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="大小写不敏感"></p>
+<h2 id="2-Select-…-AS"><a href="#2-Select-…-AS" class="headerlink" title="2. Select …. AS"></a>2. Select …. AS</h2><p>当我们的数据库列名和对象字段之间不是驼峰式命名的关系，可以在Select时使用AS，使得列名和对象名匹配上。</p>
+<p>映射文件中是本次会执行的sql，我们会查出id，city_id，city_name，city_en_name。 按照开启的驼峰式命名开关，我们会对应到对象的id，cityId，cityName，cityEnName字段。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">"selectCity"</span> <span class="attr">resultType</span>=<span class="string">"po.CityPO"</span>&gt;</span></span><br><span class="line">    select id,city_id,city_name,city_en_name from SU_City where id = #&#123;id&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>不过在这次，我们对PO做了小小的改动，把cityEnName改成了cityEnglishName。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CityPO</span> </span>&#123;</span><br><span class="line">	Integer id;</span><br><span class="line">	Long cityId;</span><br><span class="line">	String cityName;</span><br><span class="line">	String cityEnglishName;   <span class="comment">// 由cityEnName改成了cityEnglishName</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>由于找不到匹配的列，cityEnlishName肯定没法被反射赋值，因此值为Null。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CityPO&#123;id=2, cityId=2, cityName=&apos;北京&apos;, cityEnglishName=&apos;null&apos;&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>解决办法：</strong>在Select字段的时候使用AS，下面是改动后的映射文件。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">"selectCity"</span> <span class="attr">resultType</span>=<span class="string">"po.CityPO"</span>&gt;</span></span><br><span class="line">        select id,</span><br><span class="line">        city_id,</span><br><span class="line">        city_name,</span><br><span class="line">        city_en_name AS cityEnglishName</span><br><span class="line">        from SU_City</span><br><span class="line">        where id = #&#123;id&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>改动后执行得到的结果如下。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CityPO&#123;id=2, cityId=2, cityName=&apos;北京&apos;, cityEnglishName=&apos;beijing&apos;&#125;</span><br></pre></td></tr></table></figure>
+<p>那么我们来看看它是如何生效的，主要的代码在哪里。上面我们第一个介绍的函数handleRowValues中传入了参数rsw，它是对ResultSet的一个包装，在这个包装里，完成了具体使用哪个名字作为数据库的列名。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> ResultSetWrapper rsw = <span class="keyword">new</span> ResultSetWrapper(rs, configuration);</span><br><span class="line">handleRowValues(rsw, resultMap, resultHandler, <span class="keyword">new</span> RowBounds(), <span class="keyword">null</span>);</span><br></pre></td></tr></table></figure>
+<p>在这个构造函数当中，我们会获取数据库的列名，AS为什么可以生效，具体就在下面这段代码。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">super</span>();</span><br><span class="line"><span class="keyword">this</span>.typeHandlerRegistry = configuration.getTypeHandlerRegistry();</span><br><span class="line"><span class="keyword">this</span>.resultSet = rs;</span><br><span class="line"><span class="keyword">final</span> ResultSetMetaData metaData = rs.getMetaData();</span><br><span class="line"><span class="keyword">final</span> <span class="keyword">int</span> columnCount = metaData.getColumnCount();</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= columnCount; i++) &#123;</span><br><span class="line">    <span class="comment">// 在这里</span></span><br><span class="line">    columnNames.add(configuration.isUseColumnLabel() ? metaData.getColumnLabel(i) : metaData.getColumnName(i));</span><br><span class="line">    jdbcTypes.add(JdbcType.forCode(metaData.getColumnType(i)));</span><br><span class="line">    classNames.add(metaData.getColumnClassName(i));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在添加列名时，会从配置中获取是否使用类标签，isUseColumnLabel，默认为true。根据Javadoc，这个ColumnLabel就是AS后的那个名字，如果没有AS的话，就是获取的原生的字段名。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Gets the designated column's suggested title for use in printouts and</span></span><br><span class="line"><span class="comment"> * displays. The suggested title is usually specified by the SQL &lt;code&gt;AS&lt;/code&gt;</span></span><br><span class="line"><span class="comment"> * clause.  If a SQL &lt;code&gt;AS&lt;/code&gt; is not specified, the value returned from</span></span><br><span class="line"><span class="comment"> * &lt;code&gt;getColumnLabel&lt;/code&gt; will be the same as the value returned by the</span></span><br><span class="line"><span class="comment"> * &lt;code&gt;getColumnName&lt;/code&gt; method.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> column the first column is 1, the second is 2, ...</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> the suggested column title</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@exception</span> SQLException if a database access error occurs</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function">String <span class="title">getColumnLabel</span><span class="params">(<span class="keyword">int</span> column)</span> <span class="keyword">throws</span> SQLException</span>;</span><br></pre></td></tr></table></figure>
+<p>后面的过程就和上面方案一一模一样了，不再赘述。</p>
+<h2 id="3-ResultMap"><a href="#3-ResultMap" class="headerlink" title="3. ResultMap"></a>3. ResultMap</h2><blockquote>
+<p>resultMap 元素是 MyBatis 中最重要最强大的元素。它可以让你从 90% 的 JDBC ResultSets 数据提取代码中解放出来，并在一些情形下允许你做一些 JDBC 不支持的事情。 实际上，在对复杂语句进行联合映射的时候，它很可能可以代替数千行的同等功能的代码。 ResultMap 的设计思想是，简单的语句不需要明确的结果映射，而复杂一点的语句只需要描述它们的关系就行了。</p>
+</blockquote>
+<p>ResultMap是MyBatis中可以完成复杂语句映射的东西，但在我们的日常开发中，我们往往是一个XML对应JavaBeans 或 POJOs(Plain Old Java Objects，普通 Java 对象)，并没有特别复杂的应用，下面也是基于日常的使用，看看简单的ResultMap在源码层面是如何展现的。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">resultMap</span> <span class="attr">id</span>=<span class="string">"cityMap"</span> <span class="attr">type</span>=<span class="string">"po.CityPO"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">result</span> <span class="attr">column</span>=<span class="string">"id"</span> <span class="attr">property</span>=<span class="string">"id"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">result</span> <span class="attr">column</span>=<span class="string">"city_id"</span> <span class="attr">property</span>=<span class="string">"cityId"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">result</span> <span class="attr">column</span>=<span class="string">"city_name"</span> <span class="attr">property</span>=<span class="string">"cityName"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">result</span> <span class="attr">column</span>=<span class="string">"city_en_name"</span> <span class="attr">property</span>=<span class="string">"cityEnglishName"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">resultMap</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">"selectCity"</span> <span class="attr">resultMap</span>=<span class="string">"cityMap"</span>&gt;</span></span><br><span class="line">        select id,</span><br><span class="line">        city_id,</span><br><span class="line">        city_name,</span><br><span class="line">        city_en_name</span><br><span class="line">        from SU_City</span><br><span class="line">        where id = #&#123;id&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>在resultMap的子元素result对应了result和对象字段之间的映射，并通过id标示，你在Select语句中指定需要使用的resultMap即可。</p>
+<p>源码层面的话，依旧在DefaultResultSetHandler的handleResultSets中处理返回集合。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">List&lt;ResultMap&gt; resultMaps = mappedStatement.getResultMaps();</span><br></pre></td></tr></table></figure>
+<p>在这次的ResultMap中，相比之前方案，其属性更加的丰富起来。将之前写的Result的信息保存在resultMappings，idResultMappings等中，以备后续使用。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/292448-73956168a0b02a6e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="resultMappings"></p>
+<p>后续的函数走向和方案一二一致，但在创建自动映射的时候出现了不同。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> List&lt;UnMappedColumnAutoMapping&gt; <span class="title">createAutomaticMappings</span><span class="params">(ResultSetWrapper rsw, ResultMap resultMap, MetaObject metaObject, String columnPrefix)</span> <span class="keyword">throws</span> SQLException </span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在这个函数中，会获取没有映射过的列名。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> List&lt;String&gt; unmappedColumnNames = rsw.getUnmappedColumnNames(resultMap, columnPrefix);</span><br></pre></td></tr></table></figure>
+<p>之后会根据resultMap查看是否有未映射的字段。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">loadMappedAndUnmappedColumnNames(resultMap, columnPrefix);</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">loadMappedAndUnmappedColumnNames</span><span class="params">(ResultMap resultMap, String columnPrefix)</span> <span class="keyword">throws</span> SQLException </span>&#123;</span><br><span class="line">    List&lt;String&gt; mappedColumnNames = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    List&lt;String&gt; unmappedColumnNames = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    <span class="keyword">final</span> String upperColumnPrefix = columnPrefix == <span class="keyword">null</span> ? <span class="keyword">null</span> : columnPrefix.toUpperCase(Locale.ENGLISH);</span><br><span class="line">    <span class="comment">// 这里没有配置前缀，根据之前的图，定义了ResultMap后，会记录这些已经配置映射的字段。</span></span><br><span class="line">    <span class="keyword">final</span> Set&lt;String&gt; mappedColumns = prependPrefixes(resultMap.getMappedColumns(), upperColumnPrefix);</span><br><span class="line">    <span class="keyword">for</span> (String columnName : columnNames) &#123;</span><br><span class="line">        <span class="comment">// 遍历列名，如果在已映射的配置中，那么就加入已经映射的列名数据</span></span><br><span class="line">        <span class="keyword">final</span> String upperColumnName = columnName.toUpperCase(Locale.ENGLISH);</span><br><span class="line">        <span class="keyword">if</span> (mappedColumns.contains(upperColumnName)) &#123;</span><br><span class="line">            mappedColumnNames.add(upperColumnName);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            unmappedColumnNames.add(columnName);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 生成未映射和已映射的Map</span></span><br><span class="line">    mappedColumnNamesMap.put(getMapKey(resultMap, columnPrefix), mappedColumnNames);</span><br><span class="line">    unMappedColumnNamesMap.put(getMapKey(resultMap, columnPrefix), unmappedColumnNames);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果有没配置在ResultMap中，且Select出来的，那么之后也会按照之前方案一那样，继续往下走，从对象中寻找映射关系。</p>
+<p>由于没有未映射的字段，使用自动映射的结果是false。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">foundValues = applyAutomaticMappings(rsw, resultMap, metaObject, columnPrefix) || foundValues;</span><br></pre></td></tr></table></figure>
+<p>之后继续往下走，使用applyPropertyMappings来创建对象。其用到了propertyMappings，里面包含了字段名，列名，字段的类型和对应的处理器。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/292448-2ccc0ef42b243d04.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="propertyMappings"></p>
+<p>遍历整个Mappings。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Object value = getPropertyMappingValue(rsw.getResultSet(), metaObject, propertyMapping, lazyLoader, columnPrefix);</span><br></pre></td></tr></table></figure>
+<p>函数里主要的就是获取这个字段对应的类型处理器，防止类型转换失败，这一部分下次会专门看一下。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> TypeHandler&lt;?&gt; typeHandler = propertyMapping.getTypeHandler();</span><br><span class="line"><span class="keyword">final</span> String column = prependPrefix(propertyMapping.getColumn(), columnPrefix);</span><br><span class="line"><span class="keyword">return</span> typeHandler.getResult(rs, column);</span><br></pre></td></tr></table></figure>
+<p>TypeHandler就是一个接口，主要完成的工作就是从Result根据列名，获取相应类型的值，为下一步反射赋值做准备。至于它是怎么决定为什么用这个类型的TypeHandler下次再看。</p>
+<p>然后就是给对应字段赋值。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">metaObject.setValue(property, value);</span><br></pre></td></tr></table></figure>
+<p>最后就完成了整个类的赋值。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/292448-9271873a13994420.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="赋值"></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>大致上，MyBatis完成映射主要是两种方式：</p>
+<ol>
+<li>只根据列名，利用自动映射，根据反射类的信息，得到列名和字段之间的关系，使用对应的TypeHandler完成字段的赋值。</li>
+<li>使用ResultMap预先定义好映射关系，最后也是根据TypeHandler和反射完成字段的赋值。</li>
+</ol>
+<p>就简单的用法来说，两者都可以。在一次会话中，Configuration中的ResultMap关系建立好，在每一次查询的时候就不用再去重新建立了，直接用就行。而自动映射的话，执行过一次后，也会在会话中建立自动映射的缓存，所以没什么差别。但如果复杂的映射的话，就非ResultMap莫属啦。具体可以参考MyBatis文档关于映射的章节，因为目前用不到比较复杂的映射，不做深究了。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/27/POI/POI读取excel数字列自动带.0的解决办法/" rel="next" title="POI读取excel数字列自动带.0的解决办法">
+                <i class="fa fa-chevron-left"></i> POI读取excel数字列自动带.0的解决办法
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/05/14/MyBatis/spring boot mapper加载方式/" rel="prev" title="spring boot mapper加载方式">
+                spring boot mapper加载方式 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="gitalk-container">
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Zong</p>
+              <div class="site-description motion-element" itemprop="description"></div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">166</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                      <a href="/categories/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">31</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/zkzong" title="GitHub &rarr; https://github.com/zkzong" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-驼峰命名开关"><span class="nav-number">1.</span> <span class="nav-text">1. 驼峰命名开关</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Select-…-AS"><span class="nav-number">2.</span> <span class="nav-text">2. Select …. AS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-ResultMap"><span class="nav-number">3.</span> <span class="nav-text">3. ResultMap</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Zong</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.0"></script>
+
+  <script src="/js/motion.js?v=7.1.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.1.0"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.1.0"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.0"></script>
+<script src="/js/post-details.js?v=7.1.0"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.0"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+    
+
+<script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+
+
+<script src="//cdn.jsdelivr.net/npm/js-md5@0.7.3/src/md5.min.js"></script>
+
+<script>
+  var gitalk = new Gitalk({
+    clientID: '73066bdec38692537c94',
+    clientSecret: 'b1e5d41ba29fae3ae6eaae2b7920971f33730a9f',
+    repo: 'zkzong.github.io',
+    owner: 'zkzong',
+    admin: ['zkzong'],
+    id: md5(location.pathname),
+    
+      language: window.navigator.language || window.navigator.userLanguage,
+    
+    distractionFreeMode: 'true'
+  });
+  gitalk.render('gitalk-container');
+</script>
+
+  
+
+
+  
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+  
+  <script>
+    
+    function addCount(Counter) {
+      var $visitors = $('.leancloud_visitors');
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+
+      Counter('get', '/classes/Counter', { where: JSON.stringify({ url }) })
+        .done(function({ results }) {
+          if (results.length > 0) {
+            var counter = results[0];
+            
+            Counter('put', '/classes/Counter/' + counter.objectId, JSON.stringify({ time: { '__op': 'Increment', 'amount': 1 } }))
+            
+              .done(function() {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.time + 1);
+              })
+            
+              .fail(function ({ responseJSON }) {
+                console.log('Failed to save Visitor num, with error message: ' + responseJSON.error);
+              })
+          } else {
+            
+              Counter('post', '/classes/Counter', JSON.stringify({ title: title, url: url, time: 1 }))
+                .done(function() {
+                  var $element = $(document.getElementById(url));
+                  $element.find('.leancloud-visitors-count').text(1);
+                })
+                .fail(function() {
+                  console.log('Failed to create');
+                });
+            
+          }
+        })
+        .fail(function ({ responseJSON }) {
+          console.log('LeanCloud Counter Error: ' + responseJSON.code + ' ' + responseJSON.error);
+        });
+    }
+    
+
+    $(function() {
+      $.get('https://app-router.leancloud.cn/2/route?appId=' + 'UWPKKSPkFHL2NjJhMNAROaVk-gzGzoHsz')
+        .done(function({ api_server }) {
+          var Counter = function(method, url, data) {
+            return $.ajax({
+              method: method,
+              url: 'https://' + api_server + '/1.1' + url,
+              headers: {
+                'X-LC-Id': 'UWPKKSPkFHL2NjJhMNAROaVk-gzGzoHsz',
+                'X-LC-Key': 'mE5iLOQA7IQtQusstI82ahjV',
+                'Content-Type': 'application/json',
+              },
+              data: data
+            });
+          };
+          
+            addCount(Counter);
+          
+        });
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

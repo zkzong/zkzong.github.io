@@ -1,0 +1,1427 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="和其他语言相比， Java经常因为不必要的冗长被批评。 Lombok提供了一系列注解用以在后台生成模板代码，将其从你的类中删除，从而有助于保持你的代码整洁。较少的模板意味着更简洁的代码，更易于阅读和维护。在本文中，我将涉及我经常使用的 Lombok功能，并向你展示如何使用他们生产更清晰、更简洁的代码。 1. @NonNull对方法参数进行 null 检查通常不是一个坏主意，特别是如果该方法形成的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Lombok常用注解">
+<meta property="og:url" content="http://yoursite.com/2019/07/21/Lombok/Lombok常用注解/index.html">
+<meta property="og:site_name" content="Zong&#39;s Blog">
+<meta property="og:description" content="和其他语言相比， Java经常因为不必要的冗长被批评。 Lombok提供了一系列注解用以在后台生成模板代码，将其从你的类中删除，从而有助于保持你的代码整洁。较少的模板意味着更简洁的代码，更易于阅读和维护。在本文中，我将涉及我经常使用的 Lombok功能，并向你展示如何使用他们生产更清晰、更简洁的代码。 1. @NonNull对方法参数进行 null 检查通常不是一个坏主意，特别是如果该方法形成的">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2022-01-06T13:21:26.295Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Lombok常用注解">
+<meta name="twitter:description" content="和其他语言相比， Java经常因为不必要的冗长被批评。 Lombok提供了一系列注解用以在后台生成模板代码，将其从你的类中删除，从而有助于保持你的代码整洁。较少的模板意味着更简洁的代码，更易于阅读和维护。在本文中，我将涉及我经常使用的 Lombok功能，并向你展示如何使用他们生产更清晰、更简洁的代码。 1. @NonNull对方法参数进行 null 检查通常不是一个坏主意，特别是如果该方法形成的">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://yoursite.com/2019/07/21/Lombok/Lombok常用注解/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Lombok常用注解 | Zong's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Zong's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">技术博客</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/21/Lombok/Lombok常用注解/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Zong">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Zong's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Lombok常用注解
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-07-21 00:00:00" itemprop="dateCreated datePublished" datetime="2019-07-21T00:00:00+08:00">2019-07-21</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2022-01-06 21:21:26" itemprop="dateModified" datetime="2022-01-06T21:21:26+08:00">2022-01-06</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Lombok/" itemprop="url" rel="index"><span itemprop="name">Lombok</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+            <span id="/2019/07/21/Lombok/Lombok常用注解/" class="leancloud_visitors" data-flag-title="Lombok常用注解">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读次数：</span>
+              
+                <span class="leancloud-visitors-count"></span>
+            </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>和其他语言相比， Java经常因为不必要的冗长被批评。 Lombok提供了一系列注解用以在后台生成模板代码，将其从你的类中删除，从而有助于保持你的代码整洁。较少的模板意味着更简洁的代码，更易于阅读和维护。在本文中，我将涉及我经常使用的 Lombok功能，并向你展示如何使用他们生产更清晰、更简洁的代码。</p>
+<h1 id="1-NonNull"><a href="#1-NonNull" class="headerlink" title="1. @NonNull"></a>1. @NonNull</h1><p>对方法参数进行 null 检查通常不是一个坏主意，特别是如果该方法形成的 API被其他开发者使用。虽然这些检查很简单，但是他们可能变得冗长，特别是当你有多个参数时。如下所示，额外的代码无助于可读性，并且可能从方法的主要目的分散注意力。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">nonNullDemo</span><span class="params">(Employee employee, Account account)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (employee == <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"Employee is marked @NonNull but is null"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (account == <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"Account is marked @NonNull but is null"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// do stuff</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>理想情况下，你需要 null 检查——没有干扰的那种。这就是 <code>@NonNull</code>发挥作用的地方。通过用<code>@NonNull</code>标记参数，Lombok替你为该参数生成 null 检查。你的方法突然变得更加简洁，但没有丢失那些安全性的 null 检查。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">nonNullDemo</span><span class="params">(@NonNull Employee employee, @NonNull Account account)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// just do stuff</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>默认情况下， Lombok会抛出 NullPointerException，如果你愿意，可以配置 Lombok抛出 IllegalArgumentException。我个人更喜欢 IllegalArgumentException，因为我认为它更适合于对参数检查。</p>
+<h1 id="2-更简洁的数据类"><a href="#2-更简洁的数据类" class="headerlink" title="2. 更简洁的数据类"></a>2. 更简洁的数据类</h1><p>数据类是 Lombok 真正有助于减少模板代码的领域。在查看该选项前，思考一下我们经常需要处理的模板种类。数据类通常包括以下一种或全部：</p>
+<ul>
+<li>构造函数（有或没有参数）</li>
+<li>私有成员变量的 getter 方法</li>
+<li>私有非 final 成员变量的 setter 方法</li>
+<li>帮助记录日志的 toString 方法</li>
+<li>equals 和 hashCode（处理相等/集合）</li>
+</ul>
+<p>可以通过 IDE 生成以上内容，因此问题不在于编写他们花费的时间。问题是带有少量成员变量的简单类很快会变得非常冗长。让我们看看 Lombok 如何通过处理上述的每一项来减少混乱。</p>
+<h2 id="3-1-Getter-和-Setter"><a href="#3-1-Getter-和-Setter" class="headerlink" title="3.1 @Getter 和 @Setter"></a>3.1 @Getter 和 @Setter</h2><p>想想下面的 Car 类。当生成 getter 和 setter 时，我们会得到接近 50 行代码来描述一个包含 5 个成员变量的类。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Car</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String make;</span><br><span class="line">    <span class="keyword">private</span> String model;</span><br><span class="line">    <span class="keyword">private</span> String bodyType;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> yearOfManufacture;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> cubicCapacity;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getMake</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> make;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setMake</span><span class="params">(String make)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.make = make;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getModel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> model;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setModel</span><span class="params">(String model)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.model = model;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getBodyType</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> bodyType;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setBodyType</span><span class="params">(String bodyType)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.bodyType = bodyType;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getYearOfManufacture</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> yearOfManufacture;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setYearOfManufacture</span><span class="params">(<span class="keyword">int</span> yearOfManufacture)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.yearOfManufacture = yearOfManufacture;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getCubicCapacity</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> cubicCapacity;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setCubicCapacity</span><span class="params">(<span class="keyword">int</span> cubicCapacity)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.cubicCapacity = cubicCapacity;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Lombok可以替你生成 getter和 setter模板。通过对每个成员变量使用 @Getter和 @Setter注解，你最终得到一个等效的类，如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Car</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Getter</span></span><br><span class="line">    <span class="meta">@Setter</span></span><br><span class="line">    <span class="keyword">private</span> String make;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Getter</span></span><br><span class="line">    <span class="meta">@Setter</span></span><br><span class="line">    <span class="keyword">private</span> String model;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Getter</span></span><br><span class="line">    <span class="meta">@Setter</span></span><br><span class="line">    <span class="keyword">private</span> String bodyType;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Getter</span></span><br><span class="line">    <span class="meta">@Setter</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> yearOfManufacture;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Getter</span></span><br><span class="line">    <span class="meta">@Setter</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> cubicCapacity;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注意，你只能在非 final 成员变量上使用 @Setter，在 final成员变量上使用将导致编译错误。</p>
+<p>如果你需要为每个成员变量生成 getter和 setter，你也可以在类级别使用 @Getter和 @Setter，如下所示。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Getter</span></span><br><span class="line"><span class="meta">@Setter</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Car</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String make;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String model;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String bodyType;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> yearOfManufacture;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> cubicCapacity;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="3-2-AllArgsConstructor"><a href="#3-2-AllArgsConstructor" class="headerlink" title="3.2 @AllArgsConstructor"></a>3.2 @AllArgsConstructor</h2><p>数据类通常包含一个构造函数，它为每个成员变量接受参数。IDE 为 Car 生成的构造函数如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Car</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Getter</span></span><br><span class="line">    <span class="meta">@Setter</span></span><br><span class="line">    <span class="keyword">private</span> String make;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Getter</span></span><br><span class="line">    <span class="meta">@Setter</span></span><br><span class="line">    <span class="keyword">private</span> String model;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Getter</span></span><br><span class="line">    <span class="meta">@Setter</span></span><br><span class="line">    <span class="keyword">private</span> String bodyType;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Getter</span></span><br><span class="line">    <span class="meta">@Setter</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> yearOfManufacture;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Getter</span></span><br><span class="line">    <span class="meta">@Setter</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> cubicCapacity;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Car</span><span class="params">(String make, String model, String bodyType, <span class="keyword">int</span> yearOfManufacture, <span class="keyword">int</span> cubicCapacity)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>();</span><br><span class="line">        <span class="keyword">this</span>.make = make;</span><br><span class="line">        <span class="keyword">this</span>.model = model;</span><br><span class="line">        <span class="keyword">this</span>.bodyType = bodyType;</span><br><span class="line">        <span class="keyword">this</span>.yearOfManufacture = yearOfManufacture;</span><br><span class="line">        <span class="keyword">this</span>.cubicCapacity = cubicCapacity;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们可以使用 @AllArgsConstructor 注解实现同样功能。 使用 @Getter 和 @Setter、 @AllArgsConstructor可以减少模板，保持类更干净且更简洁。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@AllArgsConstructor</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Car</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Getter</span></span><br><span class="line">    <span class="meta">@Setter</span></span><br><span class="line">    <span class="keyword">private</span> String make;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Getter</span></span><br><span class="line">    <span class="meta">@Setter</span></span><br><span class="line">    <span class="keyword">private</span> String model;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Getter</span></span><br><span class="line">    <span class="meta">@Setter</span></span><br><span class="line">    <span class="keyword">private</span> String bodyType;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Getter</span></span><br><span class="line">    <span class="meta">@Setter</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> yearOfManufacture;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Getter</span></span><br><span class="line">    <span class="meta">@Setter</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> cubicCapacity;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>还有其他选项用于生成构造函数。 @RequiredArgsConstructor 将创建带有每个 final成员变量参数的构造函数， @NoArgsConstructor<br>将创建没有参数的构造函数。</p>
+<h2 id="3-3-ToString"><a href="#3-3-ToString" class="headerlink" title="3.3 @ToString"></a>3.3 @ToString</h2><p>在你的数据类上覆盖 toString方法是有助于记录日志的良好实践。IDE 为 Car类生成的 toString方法如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@AllArgsConstructor</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Car</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Getter</span></span><br><span class="line">    <span class="meta">@Setter</span></span><br><span class="line">    <span class="keyword">private</span> String make;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Getter</span></span><br><span class="line">    <span class="meta">@Setter</span></span><br><span class="line">    <span class="keyword">private</span> String model;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Getter</span></span><br><span class="line">    <span class="meta">@Setter</span></span><br><span class="line">    <span class="keyword">private</span> String bodyType;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Getter</span></span><br><span class="line">    <span class="meta">@Setter</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> yearOfManufacture;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Getter</span></span><br><span class="line">    <span class="meta">@Setter</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> cubicCapacity;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"Car [make="</span> + make + <span class="string">", model="</span></span><br><span class="line">                + model + <span class="string">", bodyType="</span> + bodyType + <span class="string">", yearOfManufacture="</span></span><br><span class="line">                + yearOfManufacture + <span class="string">", cubicCapacity="</span> + cubicCapacity</span><br><span class="line">                + <span class="string">"]"</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们可以使用 ToString注解替换这个，如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ToString</span></span><br><span class="line"><span class="meta">@AllArgsConstructor</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Car</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Getter</span></span><br><span class="line">    <span class="meta">@Setter</span></span><br><span class="line">    <span class="keyword">private</span> String make;</span><br><span class="line">    <span class="meta">@Getter</span></span><br><span class="line">    <span class="meta">@Setter</span></span><br><span class="line">    <span class="keyword">private</span> String model;</span><br><span class="line">    <span class="meta">@Getter</span></span><br><span class="line">    <span class="meta">@Setter</span></span><br><span class="line">    <span class="keyword">private</span> String bodyType;</span><br><span class="line">    <span class="meta">@Getter</span></span><br><span class="line">    <span class="meta">@Setter</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> yearOfManufacture;</span><br><span class="line">    <span class="meta">@Getter</span></span><br><span class="line">    <span class="meta">@Setter</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> cubicCapacity;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>默认情况下，Lombok 生成包含所有成员变量的 toString 方法。可以通过 exclude 属性 <code>@ToString(exclude={&quot;someField&quot;},&quot;someOtherField&quot;})</code> 覆盖行为将某些成员变量排除。</p>
+<h2 id="3-4-EqualsAndHashCode"><a href="#3-4-EqualsAndHashCode" class="headerlink" title="3.4 @EqualsAndHashCode"></a>3.4 @EqualsAndHashCode</h2><p>如果你正在将你的数据类和任何类型的对象比较，则需要覆盖 equals和 hashCode 方法。对象的相等是基于业务规则定义的。举个例子，在 Car类中，如果两个对象有相同的 make、 model和 bodyType，我可能认为他们是相等的。如果我使用 IDE 生成 equals 方法检查 make、 model 和 bodyType，它看起来会是这样：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object obj)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span> == obj)</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    <span class="keyword">if</span> (obj == <span class="keyword">null</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    <span class="keyword">if</span> (getClass() != obj.getClass())</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    Car other = (Car) obj;</span><br><span class="line">    <span class="keyword">if</span> (bodyType == <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (other.bodyType != <span class="keyword">null</span>)</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (!bodyType.equals(other.bodyType))</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    <span class="keyword">if</span> (make == <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (other.make != <span class="keyword">null</span>)</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (!make.equals(other.make))</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    <span class="keyword">if</span> (model == <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (other.model != <span class="keyword">null</span>)</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (!model.equals(other.model))</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>等价的 hashCode 实现如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">hashCode</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">int</span> prime = <span class="number">31</span>;</span><br><span class="line">    <span class="keyword">int</span> result = <span class="number">1</span>;</span><br><span class="line">    result = prime * result + ((bodyType == <span class="keyword">null</span>) ? <span class="number">0</span> : bodyType.hashCode());</span><br><span class="line">    result = prime * result + ((make == <span class="keyword">null</span>) ? <span class="number">0</span> : make.hashCode());</span><br><span class="line">    result = prime * result + ((model == <span class="keyword">null</span>) ? <span class="number">0</span> : model.hashCode());</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>虽然 IDE 处理了繁重的工作，但我们在类中仍然有大量的模板代码。 Lombok允许我们使用 @EqualsAndHashCode 类注解实现相同的功能，如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ToString</span></span><br><span class="line"><span class="meta">@AllArgsConstructor</span></span><br><span class="line"><span class="meta">@EqualsAndHashCode</span>(exclude = &#123;<span class="string">"yearOfManufacture"</span>, <span class="string">"cubicCapacity"</span>&#125;)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Car</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Getter</span></span><br><span class="line">    <span class="meta">@Setter</span></span><br><span class="line">    <span class="keyword">private</span> String make;</span><br><span class="line">    <span class="meta">@Getter</span></span><br><span class="line">    <span class="meta">@Setter</span></span><br><span class="line">    <span class="keyword">private</span> String model;</span><br><span class="line">    <span class="meta">@Getter</span></span><br><span class="line">    <span class="meta">@Setter</span></span><br><span class="line">    <span class="keyword">private</span> String bodyType;</span><br><span class="line">    <span class="meta">@Getter</span></span><br><span class="line">    <span class="meta">@Setter</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> yearOfManufacture;</span><br><span class="line">    <span class="meta">@Getter</span></span><br><span class="line">    <span class="meta">@Setter</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> cubicCapacity;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>默认情况下，@EqualsAndHashCode 会创建包含所有成员变量的 equals 和 hashCode 方法。 exclude选项可用于通知 Lombok排除某些成员变量。在上面的代码片段中。我已经从生成的 equals和 hashCode方法中排除了 yearOfManuFacture 和 cubicCapacity。</p>
+<h2 id="3-5-Data"><a href="#3-5-Data" class="headerlink" title="3.5 @Data"></a>3.5 @Data</h2><p>如果你想使数据类尽可能精简，可以使用 @Data 注解。 @Data 是 @Getter、 @Setter、 @ToString、 @EqualsAndHashCode 和 @RequiredArgsConstructor 的快捷方式。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ToString</span></span><br><span class="line"><span class="meta">@RequiredArgsConstructor</span></span><br><span class="line"><span class="meta">@EqualsAndHashCode</span>(exclude = &#123;<span class="string">"yearOfManufacture"</span>, <span class="string">"cubicCapacity"</span>&#125;)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Car</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Getter</span></span><br><span class="line">    <span class="meta">@Setter</span></span><br><span class="line">    <span class="keyword">private</span> String make;</span><br><span class="line">    <span class="meta">@Getter</span></span><br><span class="line">    <span class="meta">@Setter</span></span><br><span class="line">    <span class="keyword">private</span> String model;</span><br><span class="line">    <span class="meta">@Getter</span></span><br><span class="line">    <span class="meta">@Setter</span></span><br><span class="line">    <span class="keyword">private</span> String bodyType;</span><br><span class="line">    <span class="meta">@Getter</span></span><br><span class="line">    <span class="meta">@Setter</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> yearOfManufacture;</span><br><span class="line">    <span class="meta">@Getter</span></span><br><span class="line">    <span class="meta">@Setter</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> cubicCapacity;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过使用 @Data，我们可以将上面的类精简如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Car</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String make;</span><br><span class="line">    <span class="keyword">private</span> String model;</span><br><span class="line">    <span class="keyword">private</span> String bodyType;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> yearOfManufacture;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> cubicCapacity;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="4-使用-Buidler-创建对象"><a href="#4-使用-Buidler-创建对象" class="headerlink" title="4. 使用 @Buidler 创建对象"></a>4. 使用 @Buidler 创建对象</h1><p>建造者设计模式描述了一种灵活的创建对象的方式。 Lombok可以帮你轻松的实现该模式。看一个使用简单 Car 类的示例。假设我们希望可以创建各种 Car对象，但我们希望在创建时设置的属性具有灵活性。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@AllArgsConstructor</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Car</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String make;</span><br><span class="line">    <span class="keyword">private</span> String model;</span><br><span class="line">    <span class="keyword">private</span> String bodyType;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> yearOfManufacture;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> cubicCapacity;</span><br><span class="line">    <span class="keyword">private</span> List&lt;LocalDate&gt; serviceDate;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>假设我们要创建一个 Car，但只想设置 make和 model。在 Car上使用标准的全参数构造函数意味着我们只提供 make和 model并设置其他参数为 null。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Car2 car2 = <span class="keyword">new</span> Car2(<span class="string">"Ford"</span>, <span class="string">"Mustang"</span>, <span class="keyword">null</span>, <span class="keyword">null</span>, <span class="keyword">null</span>, <span class="keyword">null</span>);</span><br></pre></td></tr></table></figure>
+<p>这可行但并不理想，我们必须为我们不感兴趣的参数传递 null。我们可以创建一个只接受 make和 model的构造函数来避开这个问题。这是一个合理的解决方法，但不够灵活。如果我们有许多不同的字段排列，我们怎么来创建一个新 Car？最终我们得到了一堆不同的构造函数，代表了我们可以实例化 Car的所有可能方式。</p>
+<p>解决该问题的一种干净、灵活的方式是使用建造者模式。 Lombok通过 @Builder 注解帮你实现建造者模式。当你使用 @Builder 注解 Car 类时， Lombok会执行以下操作：</p>
+<ul>
+<li>添加一个私有构造函数到 Car</li>
+<li>创建一个静态的 CarBuilder 类</li>
+<li>在 CarBuilder 中为 Car 中的每个成员创建一个 setter风格方法</li>
+<li>在 CarBuilder中添加创建 Car 的新实例的建造方法</li>
+</ul>
+<p>CarBuilder上的每个 setter 风格方法返回自身的实例（ CarBuilder）。这允许你进行方法链式调用并为对象创建提供流畅的 API。让我们看看它如何使用。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Car muscleCar = Car.builder().make(<span class="string">"Ford"</span>)</span><br><span class="line">        .model(<span class="string">"mustang"</span>)</span><br><span class="line">        .bodyType(<span class="string">"coupe"</span>)</span><br><span class="line">        .build();</span><br></pre></td></tr></table></figure>
+<p>现在只使用 make 和 model 创建 Car 比之前更简洁了。只需在 Car 上简单的调用生成的 builder 方法获取 CarBuilder 实例，然后调用任何我们感兴趣的 setter 风格方法。最后，调用 build 创建 Car 的新实例。</p>
+<p>另一个值得一提的方便的注解是 @Singular。默认情况下，Lombok 为集合创建使用集合参数的标准的 setter 风格方法。在下面的例子中，我们创建了新的 Car 并设置了服务日期列表。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Builder</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Car</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String make;</span><br><span class="line">    <span class="keyword">private</span> String model;</span><br><span class="line">    <span class="keyword">private</span> String bodyType;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> yearOfManufacture;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> cubicCapacity;</span><br><span class="line">    <span class="meta">@Singular</span></span><br><span class="line">    <span class="keyword">private</span> List&lt;LocalDate&gt; serviceDate;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>向集合成员变量添加 @Singular 将提供一个额外的方法，允许你向集合添加单个项。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Car muscleCar3 = Car.builder()</span><br><span class="line">        .make(<span class="string">"Ford"</span>)</span><br><span class="line">        .model(<span class="string">"mustang"</span>)</span><br><span class="line">        .serviceDate(LocalDate.of(<span class="number">2016</span>, <span class="number">5</span>, <span class="number">4</span>))</span><br><span class="line">        .build();</span><br></pre></td></tr></table></figure>
+<p>现在我们可以添加单个服务日期，如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Car muscleCar3 = Car.builder()</span><br><span class="line">        .make(<span class="string">"Ford"</span>)</span><br><span class="line">        .model(<span class="string">"mustang"</span>)</span><br><span class="line">        .serviceDate(LocalDate.of(<span class="number">2016</span>, <span class="number">5</span>, <span class="number">4</span>))</span><br><span class="line">        .build();</span><br></pre></td></tr></table></figure>
+<p>这是一个有助于在创建对象期间处理集合时保持代码简洁的快捷方法。</p>
+<h1 id="5-日志"><a href="#5-日志" class="headerlink" title="5. 日志"></a>5. 日志</h1><p>Lombok另一个伟大的功能是日志记录器。如果没有 Lombok，要实例化标准的 SLF4J日志记录器，通常会有以下内容：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SomeService</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(LogExample.class);</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doStuff</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        log.debug(<span class="string">"doing stuff...."</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这些日志记录器很沉重，并为每个需要日志记录的类添加了不必要的混乱。值得庆幸的是 Lombok提供了一个为你创建日志记录器的注解。你要做的所有事情就是在类上添加注解，这样就可以了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Slf</span>4j</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SomeService</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doStuff</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        log.debug(<span class="string">"doing stuff...."</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我在这里使用了 @SLF4J注解，但 Lombok能为几乎所有通用 Java日志框架生成日志记录器。有关更多日志记录器的选项，请参阅文档。</p>
+<p>我非常喜欢 Lombok 的一点是它的不侵入性。如果你决定在使用如 @Getter、 @Setter 或 @ToString 时也想要自己的方法实现，你的方法将总是优先于 Lombok。它允许你在大多数时间使用 Lombok，但在你需要的时候仍有控制权。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/11/JSON/全解史上最快的JOSN解析库 - alibaba Fastjson/" rel="next" title="全解史上最快的JOSN解析库 - alibaba Fastjson">
+                <i class="fa fa-chevron-left"></i> 全解史上最快的JOSN解析库 - alibaba Fastjson
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/12/02/Redis/Redis基础篇/" rel="prev" title="Redis基础篇">
+                Redis基础篇 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="gitalk-container">
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Zong</p>
+              <div class="site-description motion-element" itemprop="description"></div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">166</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                      <a href="/categories/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">31</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/zkzong" title="GitHub &rarr; https://github.com/zkzong" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-NonNull"><span class="nav-number">1.</span> <span class="nav-text">1. @NonNull</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-更简洁的数据类"><span class="nav-number">2.</span> <span class="nav-text">2. 更简洁的数据类</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-Getter-和-Setter"><span class="nav-number">2.1.</span> <span class="nav-text">3.1 @Getter 和 @Setter</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-AllArgsConstructor"><span class="nav-number">2.2.</span> <span class="nav-text">3.2 @AllArgsConstructor</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-3-ToString"><span class="nav-number">2.3.</span> <span class="nav-text">3.3 @ToString</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-4-EqualsAndHashCode"><span class="nav-number">2.4.</span> <span class="nav-text">3.4 @EqualsAndHashCode</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-5-Data"><span class="nav-number">2.5.</span> <span class="nav-text">3.5 @Data</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4-使用-Buidler-创建对象"><span class="nav-number">3.</span> <span class="nav-text">4. 使用 @Buidler 创建对象</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#5-日志"><span class="nav-number">4.</span> <span class="nav-text">5. 日志</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Zong</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.0"></script>
+
+  <script src="/js/motion.js?v=7.1.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.1.0"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.1.0"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.0"></script>
+<script src="/js/post-details.js?v=7.1.0"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.0"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+    
+
+<script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+
+
+<script src="//cdn.jsdelivr.net/npm/js-md5@0.7.3/src/md5.min.js"></script>
+
+<script>
+  var gitalk = new Gitalk({
+    clientID: '73066bdec38692537c94',
+    clientSecret: 'b1e5d41ba29fae3ae6eaae2b7920971f33730a9f',
+    repo: 'zkzong.github.io',
+    owner: 'zkzong',
+    admin: ['zkzong'],
+    id: md5(location.pathname),
+    
+      language: window.navigator.language || window.navigator.userLanguage,
+    
+    distractionFreeMode: 'true'
+  });
+  gitalk.render('gitalk-container');
+</script>
+
+  
+
+
+  
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+  
+  <script>
+    
+    function addCount(Counter) {
+      var $visitors = $('.leancloud_visitors');
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+
+      Counter('get', '/classes/Counter', { where: JSON.stringify({ url }) })
+        .done(function({ results }) {
+          if (results.length > 0) {
+            var counter = results[0];
+            
+            Counter('put', '/classes/Counter/' + counter.objectId, JSON.stringify({ time: { '__op': 'Increment', 'amount': 1 } }))
+            
+              .done(function() {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.time + 1);
+              })
+            
+              .fail(function ({ responseJSON }) {
+                console.log('Failed to save Visitor num, with error message: ' + responseJSON.error);
+              })
+          } else {
+            
+              Counter('post', '/classes/Counter', JSON.stringify({ title: title, url: url, time: 1 }))
+                .done(function() {
+                  var $element = $(document.getElementById(url));
+                  $element.find('.leancloud-visitors-count').text(1);
+                })
+                .fail(function() {
+                  console.log('Failed to create');
+                });
+            
+          }
+        })
+        .fail(function ({ responseJSON }) {
+          console.log('LeanCloud Counter Error: ' + responseJSON.code + ' ' + responseJSON.error);
+        });
+    }
+    
+
+    $(function() {
+      $.get('https://app-router.leancloud.cn/2/route?appId=' + 'UWPKKSPkFHL2NjJhMNAROaVk-gzGzoHsz')
+        .done(function({ api_server }) {
+          var Counter = function(method, url, data) {
+            return $.ajax({
+              method: method,
+              url: 'https://' + api_server + '/1.1' + url,
+              headers: {
+                'X-LC-Id': 'UWPKKSPkFHL2NjJhMNAROaVk-gzGzoHsz',
+                'X-LC-Key': 'mE5iLOQA7IQtQusstI82ahjV',
+                'Content-Type': 'application/json',
+              },
+              data: data
+            });
+          };
+          
+            addCount(Counter);
+          
+        });
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
